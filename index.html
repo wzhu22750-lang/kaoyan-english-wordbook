@@ -690,25 +690,54 @@
   }
 
   .word-card {
-    background: var(--bg-elevated);
-    border: none;
-    border-radius: 26px;
-    padding: 28px 32px 22px;
+    background: color-mix(in srgb, var(--paper) 55%, #ffffff 45%);
+    border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+    border-radius: 20px;
+    padding: 22px 26px 18px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
     position: relative;
     overflow: hidden;
-    transition: background-color 0.16s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 10px rgba(42, 36, 27, 0.028);
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.16s ease;
     will-change: transform, opacity;
   }
+  [data-theme="dark"] .word-card {
+    background: var(--bg-elevated);
+    border-color: var(--border);
+    box-shadow: none;
+  }
+  .word-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--sage);
+    opacity: 0.85;
+  }
+  .word-card[data-tone="high"]::before { background: var(--lemon); }
+  .word-card[data-tone="mid"]::before  { background: var(--blush); }
+  .word-card[data-tone="poly"]::before { background: var(--pink); }
+  .word-card[data-tone="low"]::before  { background: var(--sage); }
+
   .word-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--ink) 20%, transparent);
+    box-shadow: 0 12px 30px rgba(42, 36, 27, 0.07);
+  }
+  [data-theme="dark"] .word-card:hover {
+    border-color: var(--border-strong);
     box-shadow: var(--shadow-md);
   }
   .word-card.mastered {
     border: 1px dashed var(--border-strong);
+    box-shadow: none;
   }
-  .word-card.mastered .phrase-text { opacity: 0.6; }
+  .word-card.mastered::before { opacity: 0.3; }
+  .word-card.mastered .phrase-text { opacity: 0.55; }
 
   /* Silky Ink-Slash ("斩") Animation — Soft Editorial Edition */
   .slash-btn {
@@ -884,33 +913,62 @@
     }
   }
 
+  .card-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 28px;
+  }
+  .card-eyebrow-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+  }
+
   .card-top {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     justify-content: space-between;
     gap: 12px;
   }
 
   .phrase-block {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: baseline;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
   .phrase-text {
     font-family: var(--font-serif);
-    font-size: 34px;
-    font-weight: 500;
-    letter-spacing: -0.015em;
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.018em;
     color: var(--ink);
-    line-height: 1.05;
+    line-height: 1.06;
   }
   .phrase-prep {
     color: var(--ink-2);
     font-style: italic;
     font-weight: 400;
     text-decoration: none;
+  }
+  .word-pos-pill {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    background: var(--bg-subtle);
+    padding: 1px 9px;
+    border-radius: 999px;
+    vertical-align: 3px;
   }
 
   .card-right {
@@ -923,20 +981,21 @@
   .freq-badge {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 600;
-    padding: 2px 11px;
+    padding: 2px 10px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
+    border: 1px solid transparent;
   }
   .freq-high { background: var(--lemon); color: #2A241B; }
   .freq-mid  { background: var(--blush); color: #2A241B; }
   .freq-low  { background: var(--bg-subtle); color: var(--ink-2); }
 
   .icon-btn {
-    width: 29px;
-    height: 29px;
+    width: 28px;
+    height: 28px;
     border-radius: 999px;
     border: 1px solid transparent;
     background: transparent;
@@ -945,30 +1004,30 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.14s ease;
+    transition: background-color 0.14s ease, color 0.14s ease;
   }
   .icon-btn:hover { background: var(--bg-subtle); color: var(--ink); }
   .icon-btn.starred { color: #2A241B; background: var(--lemon); }
   .icon-btn.checked { color: #2A241B; background: var(--sage); }
 
   .zh-meaning {
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 500;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--ink);
-    padding: 2px 0 4px;
+    padding: 2px 0;
     transition: filter 0.2s ease, opacity 0.2s ease;
   }
 
-  /* Quiet Editorial Card Footer (replaces loud pill stacks) */
+  /* Quiet Editorial Card Footer */
   .card-foot {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding-top: 12px;
+    padding-top: 11px;
     margin-top: auto;
-    border-top: 1px dashed var(--border);
+    border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
     font-size: 12px;
     color: var(--ink-3);
     flex-wrap: wrap;
@@ -1022,37 +1081,50 @@
     background: var(--bg-subtle);
   }
 
-  /* Polysemy Contrast — Quiet, Breathable Two-Line Pair */
+  /* Polysemy Contrast — Crisp Editorial Contrast Box */
   .poly-callout {
-    background: transparent;
-    border: none;
-    border-left: 2px solid var(--blush);
-    border-radius: 0;
-    padding: 2px 0 2px 14px;
+    background: color-mix(in srgb, var(--paper) 84%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-radius: 13px;
+    padding: 11px 14px;
     font-size: 13px;
     line-height: 1.6;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 7px;
   }
   .poly-row-fam {
     color: var(--ink-3);
     font-size: 12.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
   }
   .poly-row-exm {
     color: var(--ink);
     font-weight: 500;
-    font-size: 15.5px;
+    font-size: 15px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     transition: filter 0.2s ease, opacity 0.2s ease;
   }
   .poly-tag-lbl {
-    display: inline-block;
-    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10.5px;
     font-weight: 600;
-    margin-right: 8px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--bg-subtle);
     color: var(--ink-3);
   }
-  .poly-row-exm .poly-tag-lbl { color: var(--ink-2); }
+  .poly-row-exm .poly-tag-lbl {
+    background: var(--lemon);
+    color: #2A241B;
+  }
 
   body.blur-mode .zh-meaning:not(.revealed),
   body.blur-mode .poly-row-exm:not(.revealed) {
@@ -1070,15 +1142,16 @@
   .examples-drawer {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-top: 4px;
+    gap: 9px;
+    padding-top: 2px;
   }
 
   .example-box {
-    background: color-mix(in srgb, var(--paper) 65%, transparent);
-    border: none;
-    border-radius: 14px;
-    padding: 12px 15px;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 7%, transparent);
+    border-left: 2.5px solid var(--blush);
+    border-radius: 12px;
+    padding: 11px 14px;
     font-family: var(--font-serif);
     font-size: 15.5px;
     line-height: 1.62;
@@ -1092,7 +1165,7 @@
     font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 500;
-    padding: 2px 9px;
+    padding: 1px 8px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--paper);
@@ -1108,8 +1181,8 @@
     color: var(--mark-ink);
     font-weight: 600;
     padding: 0 5px;
-    border-radius: 6px;
-    border-bottom: none;
+    border-radius: 5px;
+    border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 22%, transparent);
   }
 
   .more-occ-btn {
@@ -2011,11 +2084,14 @@ function renderPhraseCards(list) {
           </div>`).join("")}
       </div>` : "";
 
+    const tone = it.poly ? "poly" : (it.count >= 8 ? "high" : (it.count >= 3 ? "mid" : "low"));
+
     return `
-      <article class="word-card ${isM ? "mastered" : ""}" data-key="${escapeHtml(it.p)}">
-        <div class="card-top">
-          <div class="phrase-block">
-            <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
+      <article class="word-card ${isM ? "mastered" : ""}" data-tone="${tone}" data-key="${escapeHtml(it.p)}">
+        <div class="card-eyebrow">
+          <div class="card-eyebrow-meta">
+            <span>${splitParts}</span>
+            ${clozeBadgeHtml}
           </div>
           <div class="card-right">
             <span class="freq-badge ${freqClass}">×${it.count}</span>
@@ -2028,14 +2104,19 @@ function renderPhraseCards(list) {
           </div>
         </div>
 
+        <div class="card-top">
+          <div class="phrase-block">
+            <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
+          </div>
+        </div>
+
         <div class="zh-meaning">${escapeHtml(it.z)}</div>
         ${polyHtml}
         ${examplesHtml}
 
         <div class="card-foot">
           <div class="card-foot-meta">
-            <span>${splitParts}</span>
-            ${clozeBadgeHtml}
+            <span>${it.occs.length} 条真题出处</span>
           </div>
           <button class="ex-toggle-btn" data-expand="${escapeHtml(it.p)}">
             ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
@@ -2269,11 +2350,13 @@ function renderPoly() {
           </div>`).join("")}
       </div>` : "";
 
+    const polyTone = it.cat === "动词生义" ? "high" : (it.cat === "名词动用" ? "poly" : (it.cat === "政经高频" ? "mid" : "low"));
+
     return `
-      <article class="word-card ${isM ? "mastered" : ""}" data-key="${escapeHtml(it.w)}">
-        <div class="card-top">
-          <div class="phrase-block">
-            <div class="phrase-text">${escapeHtml(it.w)} <span style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:var(--ink-3);font-weight:400;">${escapeHtml(it.pos)}</span></div>
+      <article class="word-card ${isM ? "mastered" : ""}" data-tone="${polyTone}" data-key="${escapeHtml(it.w)}">
+        <div class="card-eyebrow">
+          <div class="card-eyebrow-meta">
+            <span>${escapeHtml(it.cat)}</span>
           </div>
           <div class="card-right">
             <button class="icon-btn ${isS ? "starred" : ""}" data-pstar="${escapeHtml(it.w)}" title="收藏">
@@ -2284,15 +2367,20 @@ function renderPoly() {
               : `<button class="slash-btn" data-pmaster="${escapeHtml(it.w)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
         </div>
+        <div class="card-top">
+          <div class="phrase-block">
+            <div class="phrase-text">${escapeHtml(it.w)} <span class="word-pos-pill">${escapeHtml(it.pos)}</span></div>
+          </div>
+        </div>
         <div class="poly-callout">
-          <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span>${escapeHtml(it.fam)}</div>
-          <div class="poly-row-exm"><span class="poly-tag-lbl">考研生义</span>${escapeHtml(it.exm)}</div>
+          <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span><span>${escapeHtml(it.fam)}</span></div>
+          <div class="poly-row-exm"><span class="poly-tag-lbl">生义</span><span>${escapeHtml(it.exm)}</span></div>
         </div>
         ${examplesHtml}
         <div class="card-foot">
-          <div class="card-foot-meta"><span>${escapeHtml(it.cat)}</span></div>
+          <div class="card-foot-meta"><span>${it.occs.length ? `${it.occs.length} 条真题语境` : "考研核心生义"}</span></div>
           <button class="ex-toggle-btn" data-pexpand="${escapeHtml(it.w)}">
-            ${isExp ? "收起例句 ▴" : "真题例句 ▾"}
+            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
           </button>
         </div>
       </article>`;
