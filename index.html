@@ -700,7 +700,7 @@
     position: relative;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(42, 36, 27, 0.028);
-    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.16s ease;
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s ease, box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease;
     will-change: transform, opacity;
   }
   [data-theme="dark"] .word-card {
@@ -724,9 +724,9 @@
   .word-card[data-tone="low"]::before  { background: var(--sage); }
 
   .word-card:hover {
-    transform: translateY(-2px);
+    transform: translate3d(0, -3px, 0);
     border-color: color-mix(in srgb, var(--ink) 20%, transparent);
-    box-shadow: 0 12px 30px rgba(42, 36, 27, 0.07);
+    box-shadow: 0 14px 34px rgba(42, 36, 27, 0.075);
   }
   [data-theme="dark"] .word-card:hover {
     border-color: var(--border-strong);
@@ -828,38 +828,36 @@
   .word-card.is-slashing {
     pointer-events: none;
     border-color: var(--ink);
-    transform: scale(0.988);
-    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translate3d(0, 0, 0) scale(0.985);
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease;
   }
   .word-card.is-vanishing {
     pointer-events: none;
     opacity: 0;
-    transform: translateY(-10px) scale(0.94);
-    filter: blur(1.5px);
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 1, 1),
-                transform 0.24s cubic-bezier(0.4, 0, 1, 1),
-                filter 0.22s ease;
+    transform: translate3d(0, -14px, 0) scale(0.93);
+    transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .word-card.is-entering {
-    animation: cardEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: cardEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   @keyframes cardEnter {
-    from { opacity: 0; transform: translateY(8px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.96); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
   }
 
   /* Flashcard transition */
   .fc-body.fc-exit {
     opacity: 0;
-    transform: translateX(-24px) scale(0.97);
-    transition: opacity 0.16s ease, transform 0.16s ease;
+    transform: translate3d(-22px, 0, 0) scale(0.975);
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 1, 1), transform 0.15s cubic-bezier(0.4, 0, 1, 1);
   }
   .fc-body.fc-enter {
-    animation: fcSlideIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: fcSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   @keyframes fcSlideIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from { opacity: 0; transform: translate3d(20px, 0, 0) scale(0.985); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
   }
 
   /* Sonner-style Monochrome Undo Toast */
@@ -1144,6 +1142,11 @@
     flex-direction: column;
     gap: 9px;
     padding-top: 2px;
+    animation: exReveal 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes exReveal {
+    from { opacity: 0; transform: translate3d(0, -6px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
   }
 
   .example-box {
@@ -2591,7 +2594,7 @@ function flipGridTransition(gridEl, mutateAndRender, enterKey = null) {
     void gridEl.offsetHeight;
     requestAnimationFrame(() => {
       for (const el of animTargets) {
-        el.style.transition = "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)";
+        el.style.transition = "transform 420ms cubic-bezier(0.16, 1, 0.3, 1)";
         el.style.transform = "translate3d(0, 0, 0)";
         el.addEventListener("transitionend", () => {
           el.style.transition = "";
@@ -2647,7 +2650,7 @@ function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStat
   // Phase 2: Smooth Lift & Vanish
   setTimeout(() => {
     cardEl.classList.add("is-vanishing");
-  }, 210);
+  }, 170);
 
   // Phase 3: Remove & FLIP Reflow all sibling cards smoothly
   setTimeout(() => {
@@ -2663,7 +2666,7 @@ function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStat
         renderFn();
       }, key);
     });
-  }, 420);
+  }, 360);
 }
 
 document.getElementById("wordGrid").addEventListener("click", e => {
@@ -2675,7 +2678,7 @@ document.getElementById("wordGrid").addEventListener("click", e => {
     handleSlashToggle(document.getElementById("wordGrid"), cardEl, p, state.mastered, renderPhrases, state.status);
     return;
   }
-  const ex = e.target.closest("[data-expand]"); if (ex) { const p = ex.dataset.expand; state.expanded.has(p) ? state.expanded.delete(p) : state.expanded.add(p); renderPhraseCards(currentFilteredPhrases); return; }
+  const ex = e.target.closest("[data-expand]"); if (ex) { const p = ex.dataset.expand; flipGridTransition(document.getElementById("wordGrid"), () => { state.expanded.has(p) ? state.expanded.delete(p) : state.expanded.add(p); renderPhraseCards(currentFilteredPhrases); }); return; }
   const rev = e.target.closest(".zh-meaning, .poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
 });
 
@@ -2718,7 +2721,7 @@ document.getElementById("polyGrid").addEventListener("click", e => {
     handleSlashToggle(document.getElementById("polyGrid"), cardEl, w, state.polyMastered, renderPoly, state.polyStatus);
     return;
   }
-  const ex = e.target.closest("[data-pexpand]"); if (ex) { const w = ex.dataset.pexpand; state.polyExpanded.has(w) ? state.polyExpanded.delete(w) : state.polyExpanded.add(w); renderPoly(); return; }
+  const ex = e.target.closest("[data-pexpand]"); if (ex) { const w = ex.dataset.pexpand; flipGridTransition(document.getElementById("polyGrid"), () => { state.polyExpanded.has(w) ? state.polyExpanded.delete(w) : state.polyExpanded.add(w); renderPoly(); }); return; }
   const rev = e.target.closest(".poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
 });
 
