@@ -621,16 +621,195 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+    will-change: transform, opacity;
   }
   .word-card:hover {
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
   }
   .word-card.mastered {
-    border-color: color-mix(in srgb, var(--sage) 40%, var(--border));
+    border-style: dashed;
+    border-color: var(--border-strong);
   }
-  .word-card.mastered .phrase-text { opacity: 0.7; }
+  .word-card.mastered .phrase-text { opacity: 0.65; }
+
+  /* Silky Ink-Slash ("斩") Animation */
+  .slash-btn {
+    height: 28px;
+    padding: 0 9px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--bg-elevated);
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: background-color 0.14s ease, color 0.14s ease, transform 0.12s ease;
+  }
+  .slash-btn:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--inv-ink);
+  }
+  .slash-btn:active {
+    transform: scale(0.94);
+  }
+  .slash-btn.restore-btn {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    border-color: var(--border);
+  }
+  .slash-btn.restore-btn:hover {
+    background: var(--bg-subtle);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .slash-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--bg-elevated) 48%, transparent);
+    opacity: 0;
+    animation: slashBgIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .slash-line {
+    position: absolute;
+    width: 145%;
+    height: 2.5px;
+    background: var(--ink);
+    transform: rotate(-16deg) scaleX(0);
+    transform-origin: left center;
+    animation: inkSweep 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .slash-stamp {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    padding: 4px 14px 4px 16px;
+    border: 2px solid var(--ink);
+    background: var(--bg-elevated);
+    color: var(--ink);
+    transform: scale(1.22) rotate(-6deg);
+    opacity: 0;
+    animation: stampDrop 0.22s 0.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes slashBgIn {
+    to { opacity: 1; }
+  }
+  @keyframes inkSweep {
+    0%   { transform: rotate(-16deg) scaleX(0); opacity: 0.6; }
+    65%  { transform: rotate(-16deg) scaleX(1); opacity: 1; }
+    100% { transform: rotate(-16deg) scaleX(1); opacity: 0.85; }
+  }
+  @keyframes stampDrop {
+    to { transform: scale(1) rotate(-6deg); opacity: 1; }
+  }
+
+  .word-card.is-slashing {
+    pointer-events: none;
+    border-color: var(--ink);
+    transform: scale(0.988);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .word-card.is-vanishing {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.94);
+    filter: blur(1.5px);
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 1, 1),
+                transform 0.24s cubic-bezier(0.4, 0, 1, 1),
+                filter 0.22s ease;
+  }
+  .word-card.is-entering {
+    animation: cardEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes cardEnter {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Flashcard transition */
+  .fc-body.fc-exit {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.97);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+  .fc-body.fc-enter {
+    animation: fcSlideIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes fcSlideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Sonner-style Monochrome Undo Toast */
+  .toast-host {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(18px);
+    z-index: 120;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .toast-host.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .toast-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--ink);
+    color: var(--inv-ink);
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 10px 14px 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+  }
+  .toast-undo {
+    border: 1px solid color-mix(in srgb, var(--inv-ink) 38%, transparent);
+    background: transparent;
+    color: var(--inv-ink);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .toast-undo:hover {
+    background: var(--inv-ink);
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .word-card, .slash-overlay, .slash-line, .slash-stamp, .toast-host {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 
   .card-top {
     display: flex;
@@ -1229,10 +1408,10 @@
         </div>
 
         <div class="seg-group" id="statusTabs">
-          <button class="seg-btn active" data-status="all">全部</button>
-          <button class="seg-btn" data-status="unmastered">未掌握</button>
+          <button class="seg-btn active" data-status="unmastered">待背</button>
           <button class="seg-btn" data-status="starred">已收藏</button>
-          <button class="seg-btn" data-status="mastered">已掌握</button>
+          <button class="seg-btn" data-status="mastered">已斩<span class="cnt" id="cntSlashedPhrases"></span></button>
+          <button class="seg-btn" data-status="all">全部</button>
         </div>
 
         <select class="select-ctrl" id="freqSelect">
@@ -1295,10 +1474,10 @@
         </div>
 
         <div class="seg-group" id="polyStatusTabs">
-          <button class="seg-btn active" data-status="all">全部</button>
-          <button class="seg-btn" data-status="unmastered">未掌握</button>
+          <button class="seg-btn active" data-status="unmastered">待背</button>
           <button class="seg-btn" data-status="starred">已收藏</button>
-          <button class="seg-btn" data-status="mastered">已掌握</button>
+          <button class="seg-btn" data-status="mastered">已斩<span class="cnt" id="cntSlashedPoly"></span></button>
+          <button class="seg-btn" data-status="all">全部</button>
         </div>
 
         <select class="select-ctrl" id="polySortSelect">
@@ -1345,10 +1524,18 @@
       <button class="btn" id="fcPrev">← 上一个</button>
       <div class="fc-actions">
         <button class="btn" id="fcStar">☆ 收藏</button>
-        <button class="btn btn-primary" id="fcMaster">✓ 标为已掌握</button>
+        <button class="btn btn-primary" id="fcMaster">斩掉（标熟）</button>
       </div>
       <button class="btn" id="fcNext">下一个 →</button>
     </div>
+  </div>
+</div>
+
+<!-- Undo Toast -->
+<div class="toast-host" id="toastHost" role="status" aria-live="polite">
+  <div class="toast-pill">
+    <span id="toastText"></span>
+    <button class="toast-undo" id="toastUndo">撤销</button>
   </div>
 </div>
 
@@ -1362,7 +1549,7 @@ const state = {
   // Phrases filters
   cat: "all",
   exam: "all",
-  status: "all",
+  status: "unmastered",
   freqMin: "all",
   sort: "freq",
   prep: "all",
@@ -1381,7 +1568,7 @@ const state = {
   // Poly filters
   polyCat: "all",
   polyExam: "all",
-  polyStatus: "all",
+  polyStatus: "unmastered",
   polySort: "alpha",
   polySearch: "",
   polyExpanded: new Set(),
@@ -1576,7 +1763,7 @@ function renderPhrases() {
       <div class="stat-sub">英一 ${c1} 次 · 英二 ${c2} 次</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label"><span>已掌握进度</span><span>${pct}%</span></div>
+      <div class="stat-label"><span>已斩进度</span><span>${pct}%</span></div>
       <div class="stat-value">${masteredCnt}</div>
       <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     </div>
@@ -1592,6 +1779,7 @@ function renderPhrases() {
   document.getElementById("cntThree").textContent = catCnt.three;
   document.getElementById("cntClozeOnly").textContent = clozeCnt;
   document.getElementById("cntPolyOnly").textContent = polyCnt;
+  document.getElementById("cntSlashedPhrases").textContent = masteredCnt > 0 ? masteredCnt : "";
 
   const btnClozeOnly = document.getElementById("btnClozeOnly");
   btnClozeOnly.classList.toggle("active-crimson", state.clozeOnly);
@@ -1600,7 +1788,7 @@ function renderPhrases() {
 
   // Chart
   const chartSource = scoped
-    .filter(it => (state.cat === "all" || it.c === state.cat) && (!state.clozeOnly || it.czScoped.length) && (!state.polyOnly || it.poly))
+    .filter(it => (state.cat === "all" || it.c === state.cat) && (!state.clozeOnly || it.czScoped.length) && (!state.polyOnly || it.poly) && (state.status !== "unmastered" || !state.mastered.has(it.p)))
     .sort((a, b) => b.count - a.count || a.p.localeCompare(b.p))
     .slice(0, 16);
   const maxFreq = chartSource.length ? chartSource[0].count : 1;
@@ -1639,7 +1827,7 @@ function renderPhrases() {
     ...topP.map(([pr, n]) => `<button class="prep-chip ${state.prep === pr ? "active" : ""}" data-prep="${pr}">${pr} · ${n}</button>`),
   ].join("");
 
-  const hasFilter = state.cat !== "all" || state.exam !== "all" || state.status !== "all" ||
+  const hasFilter = state.cat !== "all" || state.exam !== "all" || state.status !== "unmastered" ||
     state.freqMin !== "all" || state.prep !== "all" || state.verb !== "all" ||
     state.search.trim() !== "" || state.clozeOnly || state.polyOnly;
   document.getElementById("btnReset").style.display = hasFilter ? "inline" : "none";
@@ -1694,7 +1882,7 @@ function renderPhraseCards(list) {
       </div>` : "";
 
     return `
-      <article class="word-card ${isM ? "mastered" : ""}">
+      <article class="word-card ${isM ? "mastered" : ""}" data-key="${escapeHtml(it.p)}">
         <div class="card-top">
           <div class="phrase-block">
             <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
@@ -1704,9 +1892,9 @@ function renderPhraseCards(list) {
             <button class="icon-btn ${isS ? "starred" : ""}" data-star="${escapeHtml(it.p)}" title="收藏">
               <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </button>
-            <button class="icon-btn ${isM ? "checked" : ""}" data-master="${escapeHtml(it.p)}" title="已掌握">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
+            ${isM
+              ? `<button class="slash-btn restore-btn" data-master="${escapeHtml(it.p)}" title="恢复到待背列表">恢复</button>`
+              : `<button class="slash-btn" data-master="${escapeHtml(it.p)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
         </div>
         <div class="card-meta">
@@ -1906,7 +2094,7 @@ function renderPoly() {
       <div class="stat-sub">动词 ${pCatCnt["动词生义"] || 0} · 名动 ${pCatCnt["名词动用"] || 0} · 名词 ${pCatCnt["名词生义"] || 0} · 形副 ${pCatCnt["形副生义"] || 0}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label"><span>已掌握进度</span><span>${pct}%</span></div>
+      <div class="stat-label"><span>已斩进度</span><span>${pct}%</span></div>
       <div class="stat-value">${mCnt}</div>
       <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     </div>
@@ -1917,12 +2105,13 @@ function renderPoly() {
     </div>`;
 
   document.getElementById("cntPolyAll").textContent = scoped.length;
+  document.getElementById("cntSlashedPoly").textContent = mCnt > 0 ? mCnt : "";
   document.getElementById("polyResultsCount").textContent =
     `共 ${filtered.length} 个单词熟词生义`;
 
   const grid = document.getElementById("polyGrid");
   if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state">没有匹配的熟词生义词条。</div>`;
+    grid.innerHTML = `<div class="empty-state">当前列表已全部斩完或无匹配词条。</div>`;
     return;
   }
 
@@ -1943,7 +2132,7 @@ function renderPoly() {
       </div>` : "";
 
     return `
-      <article class="word-card ${isM ? "mastered" : ""}">
+      <article class="word-card ${isM ? "mastered" : ""}" data-key="${escapeHtml(it.w)}">
         <div class="card-top">
           <div class="phrase-block">
             <div class="phrase-text">${escapeHtml(it.w)} <span style="font-family:var(--font-mono);font-size:13px;color:var(--ink-3);font-weight:500;">${escapeHtml(it.pos)}</span></div>
@@ -1953,9 +2142,9 @@ function renderPoly() {
             <button class="icon-btn ${isS ? "starred" : ""}" data-pstar="${escapeHtml(it.w)}" title="收藏">
               <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </button>
-            <button class="icon-btn ${isM ? "checked" : ""}" data-pmaster="${escapeHtml(it.w)}" title="已掌握">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
-            </button>
+            ${isM
+              ? `<button class="slash-btn restore-btn" data-pmaster="${escapeHtml(it.w)}" title="恢复到待背列表">恢复</button>`
+              : `<button class="slash-btn" data-pmaster="${escapeHtml(it.w)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
         </div>
         <div class="poly-callout">
@@ -2061,14 +2250,14 @@ document.getElementById("chartBars").addEventListener("click", e => {
 });
 
 document.getElementById("btnReset").addEventListener("click", () => {
-  state.cat = "all"; state.exam = "all"; state.status = "all"; state.freqMin = "all";
+  state.cat = "all"; state.exam = "all"; state.status = "unmastered"; state.freqMin = "all";
   state.prep = "all"; state.verb = "all"; state.search = ""; state.clozeOnly = false; state.polyOnly = false;
   state.shown = state.pageSize; searchInput.value = ""; searchClear.classList.remove("visible");
   document.getElementById("freqSelect").value = "all";
   document.querySelectorAll("#catTabs .seg-btn, #examTabs .seg-btn, #statusTabs .seg-btn").forEach(b => b.classList.remove("active"));
   document.querySelector('#catTabs .seg-btn[data-cat="all"]').classList.add("active");
   document.querySelector('#examTabs .seg-btn[data-exam="all"]').classList.add("active");
-  document.querySelector('#statusTabs .seg-btn[data-status="all"]').classList.add("active");
+  document.querySelector('#statusTabs .seg-btn[data-status="unmastered"]').classList.add("active");
   renderPhrases();
 });
 
@@ -2081,9 +2270,159 @@ document.getElementById("btnLoadMore").addEventListener("click", () => {
   state.shown += state.pageSize; renderPhraseCards(currentFilteredPhrases);
 });
 
+// ==================== FLIP + Ink-Slash Engine & Undo Toast ====================
+const prefersReducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let toastTimer = null;
+let lastUndoAction = null;
+
+function showToast(text, onUndo) {
+  const host = document.getElementById("toastHost");
+  document.getElementById("toastText").textContent = text;
+  lastUndoAction = onUndo;
+  host.classList.add("visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    host.classList.remove("visible");
+  }, 4200);
+}
+
+document.getElementById("toastUndo").addEventListener("click", () => {
+  if (lastUndoAction) {
+    const fn = lastUndoAction;
+    lastUndoAction = null;
+    clearTimeout(toastTimer);
+    document.getElementById("toastHost").classList.remove("visible");
+    fn();
+  }
+});
+
+function flipGridTransition(gridEl, mutateAndRender, enterKey = null) {
+  if (prefersReducedMotion()) {
+    mutateAndRender();
+    return;
+  }
+  // FIRST: measure all visible cards
+  const firstRects = new Map();
+  gridEl.querySelectorAll(".word-card[data-key]").forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.bottom > -200 && r.top < window.innerHeight + 300) {
+      firstRects.set(el.dataset.key, { left: r.left, top: r.top });
+    }
+  });
+
+  // LAST: mutate state and re-render DOM
+  mutateAndRender();
+
+  // INVERT & PLAY
+  const animTargets = [];
+  gridEl.querySelectorAll(".word-card[data-key]").forEach(el => {
+    const key = el.dataset.key;
+    if (enterKey && key === enterKey) {
+      el.classList.add("is-entering");
+      el.addEventListener("animationend", () => el.classList.remove("is-entering"), { once: true });
+      return;
+    }
+    const prev = firstRects.get(key);
+    if (!prev) return;
+    const next = el.getBoundingClientRect();
+    const dx = prev.left - next.left;
+    const dy = prev.top - next.top;
+    if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+      el.style.transition = "none";
+      el.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      animTargets.push(el);
+    }
+  });
+
+  if (animTargets.length) {
+    // Force single layout flush
+    void gridEl.offsetHeight;
+    requestAnimationFrame(() => {
+      for (const el of animTargets) {
+        el.style.transition = "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)";
+        el.style.transform = "translate3d(0, 0, 0)";
+        el.addEventListener("transitionend", () => {
+          el.style.transition = "";
+          el.style.transform = "";
+        }, { once: true });
+      }
+    });
+  }
+}
+
+function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStatus) {
+  const isAlreadySlashed = targetSet.has(key);
+  if (isAlreadySlashed) {
+    // Restore smoothly with FLIP
+    flipGridTransition(gridEl, () => {
+      targetSet.delete(key);
+      saveProgress();
+      renderFn();
+    });
+    showToast(`已恢复「${key}」`, () => {
+      flipGridTransition(gridEl, () => {
+        targetSet.add(key);
+        saveProgress();
+        renderFn();
+      }, key);
+    });
+    return;
+  }
+
+  // Slashing a word! If currently viewing "待背" (or not "all"), play the silky ink-slash -> vanish -> FLIP reflow!
+  const willDisappear = (currentStatus !== "all");
+  if (!willDisappear || prefersReducedMotion() || !cardEl) {
+    targetSet.add(key);
+    saveProgress();
+    renderFn();
+    showToast(`已斩「${key}」`, () => {
+      targetSet.delete(key);
+      saveProgress();
+      renderFn();
+    });
+    return;
+  }
+
+  if (cardEl.classList.contains("is-slashing") || cardEl.classList.contains("is-vanishing")) return;
+
+  // Phase 1: Crisp Ink Slash Strike
+  const overlay = document.createElement("div");
+  overlay.className = "slash-overlay";
+  overlay.innerHTML = `<div class="slash-line"></div><div class="slash-stamp">已斩</div>`;
+  cardEl.appendChild(overlay);
+  cardEl.classList.add("is-slashing");
+
+  // Phase 2: Smooth Lift & Vanish
+  setTimeout(() => {
+    cardEl.classList.add("is-vanishing");
+  }, 210);
+
+  // Phase 3: Remove & FLIP Reflow all sibling cards smoothly
+  setTimeout(() => {
+    flipGridTransition(gridEl, () => {
+      targetSet.add(key);
+      saveProgress();
+      renderFn();
+    });
+    showToast(`已斩「${key}」`, () => {
+      flipGridTransition(gridEl, () => {
+        targetSet.delete(key);
+        saveProgress();
+        renderFn();
+      }, key);
+    });
+  }, 420);
+}
+
 document.getElementById("wordGrid").addEventListener("click", e => {
   const st = e.target.closest("[data-star]"); if (st) { const p = st.dataset.star; state.starred.has(p) ? state.starred.delete(p) : state.starred.add(p); saveProgress(); renderPhrases(); return; }
-  const ms = e.target.closest("[data-master]"); if (ms) { const p = ms.dataset.master; state.mastered.has(p) ? state.mastered.delete(p) : state.mastered.add(p); saveProgress(); renderPhrases(); return; }
+  const ms = e.target.closest("[data-master]");
+  if (ms) {
+    const p = ms.dataset.master;
+    const cardEl = ms.closest(".word-card");
+    handleSlashToggle(document.getElementById("wordGrid"), cardEl, p, state.mastered, renderPhrases, state.status);
+    return;
+  }
   const ex = e.target.closest("[data-expand]"); if (ex) { const p = ex.dataset.expand; state.expanded.has(p) ? state.expanded.delete(p) : state.expanded.add(p); renderPhraseCards(currentFilteredPhrases); return; }
   const rev = e.target.closest(".zh-meaning, .poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
 });
@@ -2120,7 +2459,13 @@ polyClear.addEventListener("click", () => { polySearch.value = ""; state.polySea
 
 document.getElementById("polyGrid").addEventListener("click", e => {
   const st = e.target.closest("[data-pstar]"); if (st) { const w = st.dataset.pstar; state.polyStarred.has(w) ? state.polyStarred.delete(w) : state.polyStarred.add(w); saveProgress(); renderPoly(); return; }
-  const ms = e.target.closest("[data-pmaster]"); if (ms) { const w = ms.dataset.pmaster; state.polyMastered.has(w) ? state.polyMastered.delete(w) : state.polyMastered.add(w); saveProgress(); renderPoly(); return; }
+  const ms = e.target.closest("[data-pmaster]");
+  if (ms) {
+    const w = ms.dataset.pmaster;
+    const cardEl = ms.closest(".word-card");
+    handleSlashToggle(document.getElementById("polyGrid"), cardEl, w, state.polyMastered, renderPoly, state.polyStatus);
+    return;
+  }
   const ex = e.target.closest("[data-pexpand]"); if (ex) { const w = ex.dataset.pexpand; state.polyExpanded.has(w) ? state.polyExpanded.delete(w) : state.polyExpanded.add(w); renderPoly(); return; }
   const rev = e.target.closest(".poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
 });
@@ -2186,7 +2531,7 @@ function renderFlashcard() {
     polyNote.textContent = "";
     document.getElementById("fcMeta").textContent = "";
     document.getElementById("fcStar").textContent = state.polyStarred.has(it.w) ? "★ 已收藏" : "☆ 收藏";
-    document.getElementById("fcMaster").textContent = state.polyMastered.has(it.w) ? "✓ 已掌握（取消）" : "✓ 标为已掌握";
+    document.getElementById("fcMaster").textContent = state.polyMastered.has(it.w) ? "恢复待背" : "斩掉（标熟）";
   } else {
     pill.className = `pill pill-${it.c}`;
     pill.textContent = catLabel(it.c);
@@ -2201,7 +2546,7 @@ function renderFlashcard() {
     polyNote.textContent = it.poly ? `熟词生义提示：熟义「${it.poly[0]}」→ 考研生义「${it.poly[1]}」` : "";
     document.getElementById("fcMeta").textContent = `真题频次：共 ${it.count} 次（英一 ${it.c1} · 英二 ${it.c2}）`;
     document.getElementById("fcStar").textContent = state.starred.has(it.p) ? "★ 已收藏" : "☆ 收藏";
-    document.getElementById("fcMaster").textContent = state.mastered.has(it.p) ? "✓ 已掌握（取消）" : "✓ 标为已掌握";
+    document.getElementById("fcMaster").textContent = state.mastered.has(it.p) ? "恢复待背" : "斩掉（标熟）";
   }
 
   document.getElementById("fcAnswer").classList.toggle("visible", fc.flipped);
@@ -2226,9 +2571,35 @@ document.getElementById("fcMaster").addEventListener("click", () => {
   const it = fc.deck[fc.idx]; if (!it) return;
   const set = fc.mode === "poly" ? state.polyMastered : state.mastered;
   const key = fc.mode === "poly" ? it.w : it.p;
-  if (set.has(key)) set.delete(key);
-  else { set.add(key); if (fc.idx < fc.deck.length - 1) { fc.idx++; fc.flipped = false; } }
-  saveProgress(); renderFlashcard();
+  if (set.has(key)) {
+    set.delete(key);
+    saveProgress();
+    renderFlashcard();
+    return;
+  }
+  const bodyEl = document.getElementById("fcBody");
+  bodyEl.classList.add("fc-exit");
+  setTimeout(() => {
+    set.add(key);
+    saveProgress();
+    fc.deck.splice(fc.idx, 1);
+    bodyEl.classList.remove("fc-exit");
+    if (fc.deck.length === 0) {
+      closeFlashcards();
+      showToast(`已斩「${key}」，本组全部完成`, () => {
+        set.delete(key); saveProgress(); render();
+      });
+      return;
+    }
+    if (fc.idx >= fc.deck.length) fc.idx = 0;
+    fc.flipped = false;
+    renderFlashcard();
+    bodyEl.classList.add("fc-enter");
+    bodyEl.addEventListener("animationend", () => bodyEl.classList.remove("fc-enter"), { once: true });
+    showToast(`已斩「${key}」`, () => {
+      set.delete(key); saveProgress(); render();
+    });
+  }, 160);
 });
 document.addEventListener("keydown", e => {
   if (!fcModal.classList.contains("open")) return;
