@@ -678,30 +678,59 @@
     margin-left: 10px;
   }
 
-  /* Wordbook Grid — Generous Editorial Whitespace */
+  /* Wordbook Grid — Clean Split-Card Spread */
   .word-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
   .word-grid.list-view {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
   }
 
   .word-card {
     background: color-mix(in srgb, var(--paper) 55%, #ffffff 45%);
     border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     border-radius: 20px;
-    padding: 22px 26px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.32fr);
+    gap: 0;
     position: relative;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(42, 36, 27, 0.028);
     transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s ease, box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease;
     will-change: transform, opacity;
+  }
+  .card-left-pane {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  .card-right-pane {
+    padding: 20px 24px;
+    border-left: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    background: color-mix(in srgb, var(--paper) 48%, transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    min-width: 0;
+  }
+  [data-theme="dark"] .card-right-pane {
+    background: rgba(242, 238, 223, 0.025);
+    border-left-color: var(--border);
+  }
+  .right-pane-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--ink-3);
   }
   [data-theme="dark"] .word-card {
     background: var(--bg-elevated);
@@ -1474,6 +1503,11 @@
     .stats-strip { grid-template-columns: repeat(2, 1fr); }
     .analytics-grid { grid-template-columns: 1fr; }
     .word-grid { grid-template-columns: 1fr; }
+    .word-card { grid-template-columns: 1fr; }
+    .card-right-pane {
+      border-left: none;
+      border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    }
     .cloze-opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 560px) {
@@ -1654,14 +1688,6 @@
       <div class="controls-drawer" id="polyFilterDrawer">
         <div class="controls-row">
           <button class="toggle-pill" id="btnPolyHardOnly">仅看硬核生义</button>
-          <div class="seg-group" id="polyCatTabs">
-            <button class="seg-btn active" data-pcat="all">全部<span class="cnt" id="cntPolyAll"></span></button>
-            <button class="seg-btn" data-pcat="动词生义">动词生义</button>
-            <button class="seg-btn" data-pcat="名词动用">名词动用</button>
-            <button class="seg-btn" data-pcat="名词生义">名词生义</button>
-            <button class="seg-btn" data-pcat="形副生义">形副生义</button>
-            <button class="seg-btn" data-pcat="core">政经多义</button>
-          </div>
 
           <div class="seg-group" id="polyExamTabs">
             <button class="seg-btn active" data-exam="all">英一 + 英二</button>
@@ -2077,7 +2103,7 @@ function renderPhraseCards(list) {
         <div class="poly-row-exm"><span class="poly-tag-lbl">生义</span>${escapeHtml(it.poly[1])}</div>
       </div>` : "";
 
-    const shownOccs = isExp ? it.occs : (state.showExamples ? it.occs.slice(0, 1) : []);
+    const shownOccs = (isExp || state.showExamples) ? it.occs : it.occs.slice(0, 1);
     const examplesHtml = shownOccs.length ? `
       <div class="examples-drawer">
         ${shownOccs.map(o => `
@@ -2085,45 +2111,48 @@ function renderPhraseCards(list) {
             <span class="example-src src-${o[0]}">${o[0] === 1 ? "英一" : "英二"} ${o[1]} · ${escapeHtml(o[2])}</span>
             ${highlightSentence(o[4], o[3])}
           </div>`).join("")}
-      </div>` : "";
+      </div>` : `<div class="example-box" style="color:var(--ink-3);">暂无真题原句</div>`;
 
     const tone = it.poly ? "poly" : (it.count >= 8 ? "high" : (it.count >= 3 ? "mid" : "low"));
 
     return `
       <article class="word-card ${isM ? "mastered" : ""}" data-tone="${tone}" data-key="${escapeHtml(it.p)}">
-        <div class="card-eyebrow">
-          <div class="card-eyebrow-meta">
-            <span>${splitParts}</span>
-            ${clozeBadgeHtml}
+        <div class="card-left-pane">
+          <div class="card-eyebrow">
+            <div class="card-eyebrow-meta">
+              <span>${splitParts}</span>
+              ${clozeBadgeHtml}
+            </div>
+            <div class="card-right">
+              <span class="freq-badge ${freqClass}">×${it.count}</span>
+              <button class="icon-btn ${isS ? "starred" : ""}" data-star="${escapeHtml(it.p)}" title="收藏">
+                <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              ${isM
+                ? `<button class="slash-btn restore-btn" data-master="${escapeHtml(it.p)}" title="恢复到待背列表">恢复</button>`
+                : `<button class="slash-btn" data-master="${escapeHtml(it.p)}" title="标熟并斩掉，不再出现">斩</button>`}
+            </div>
           </div>
-          <div class="card-right">
-            <span class="freq-badge ${freqClass}">×${it.count}</span>
-            <button class="icon-btn ${isS ? "starred" : ""}" data-star="${escapeHtml(it.p)}" title="收藏">
-              <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </button>
-            ${isM
-              ? `<button class="slash-btn restore-btn" data-master="${escapeHtml(it.p)}" title="恢复到待背列表">恢复</button>`
-              : `<button class="slash-btn" data-master="${escapeHtml(it.p)}" title="标熟并斩掉，不再出现">斩</button>`}
+
+          <div class="card-top">
+            <div class="phrase-block">
+              <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
+            </div>
           </div>
+
+          <div class="zh-meaning">${escapeHtml(it.z)}</div>
+          ${polyHtml}
         </div>
 
-        <div class="card-top">
-          <div class="phrase-block">
-            <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
-          </div>
-        </div>
-
-        <div class="zh-meaning">${escapeHtml(it.z)}</div>
-        ${polyHtml}
-        ${examplesHtml}
-
-        <div class="card-foot">
-          <div class="card-foot-meta">
-            <span>${it.occs.length} 条真题出处</span>
-          </div>
-          <button class="ex-toggle-btn" data-expand="${escapeHtml(it.p)}">
-            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
-          </button>
+        <div class="card-right-pane">
+          ${examplesHtml}
+          ${it.occs.length > 1 ? `
+            <div class="right-pane-foot">
+              <span>共 ${it.occs.length} 条真题出处</span>
+              <button class="ex-toggle-btn" data-expand="${escapeHtml(it.p)}">
+                ${isExp ? "收起多余例句 ▴" : `展开其余 ${it.occs.length - 1} 条例句 ▾`}
+              </button>
+            </div>` : ""}
         </div>
       </article>`;
   }).join("");
@@ -2268,11 +2297,6 @@ function renderPoly() {
 
   const filtered = scoped.filter(it => {
     if (state.polyHardOnly && it.hard === 0) return false;
-    if (state.polyCat === "core") {
-      if (it.cat !== "政经高频" && it.cat !== "核心多义") return false;
-    } else if (state.polyCat !== "all" && it.cat !== state.polyCat) {
-      return false;
-    }
     if (state.polyStatus === "mastered" && !state.polyMastered.has(it.w)) return false;
     if (state.polyStatus === "unmastered" && state.polyMastered.has(it.w)) return false;
     if (state.polyStatus === "starred" && !state.polyStarred.has(it.w)) return false;
@@ -2289,12 +2313,13 @@ function renderPoly() {
 
   currentFilteredPoly = filtered;
 
-  let mCnt = 0, sCnt = 0;
-  const pCatCnt = {};
+  let mCnt = 0, sCnt = 0, e1Words = 0, e2Words = 0, occTotal = 0;
   for (const it of scoped) {
-    pCatCnt[it.cat] = (pCatCnt[it.cat] || 0) + 1;
     if (state.polyMastered.has(it.w)) mCnt++;
     if (state.polyStarred.has(it.w)) sCnt++;
+    if (it.occs.some(o => o[0] === 1)) e1Words++;
+    if (it.occs.some(o => o[0] === 2)) e2Words++;
+    occTotal += it.occs.length;
   }
   const pct = scoped.length ? Math.round((mCnt / scoped.length) * 100) : 0;
   const scopeTxt = state.scope === "10y" ? "英一 16–25 · 英二 15–24" : "英一 10–25 · 英二 10–24";
@@ -2303,12 +2328,12 @@ function renderPoly() {
     <div class="stat-card">
       <div class="stat-label"><span>收录熟词生义</span><span>${scopeTxt}</span></div>
       <div class="stat-value">${scoped.length}</div>
-      <div class="stat-sub">按词性消歧精准定位考研生义语境</div>
+      <div class="stat-sub">剔除六类繁琐标签，聚焦真题生义</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label"><span>词类分布</span><span>单核心词精编</span></div>
-      <div class="stat-value">${Object.keys(pCatCnt).length} 类</div>
-      <div class="stat-sub">动词 ${pCatCnt["动词生义"] || 0} · 名动 ${pCatCnt["名词动用"] || 0} · 名词 ${pCatCnt["名词生义"] || 0} · 形副 ${pCatCnt["形副生义"] || 0}</div>
+      <div class="stat-label"><span>真题语境句</span><span>英一 ${e1Words} 词 · 英二 ${e2Words} 词</span></div>
+      <div class="stat-value">${occTotal}</div>
+      <div class="stat-sub">左半熟生义对比 · 右半直出真题原句</div>
     </div>
     <div class="stat-card">
       <div class="stat-label"><span>已斩进度</span><span>${pct}%</span></div>
@@ -2321,16 +2346,15 @@ function renderPoly() {
       <div class="stat-sub">开启「背词遮挡」可只留熟义测生义</div>
     </div>`;
 
-  document.getElementById("cntPolyAll").textContent = scoped.length;
   document.getElementById("cntSlashedPoly").textContent = mCnt > 0 ? mCnt : "";
   document.getElementById("polyResultsCount").textContent =
     `共 ${filtered.length} 个单词熟词生义`;
 
   document.getElementById("btnPolyHardOnly").classList.toggle("active-plum", state.polyHardOnly);
-  const pAdv = (!state.polyHardOnly ? 1 : 0) + (state.polyCat !== "all" ? 1 : 0) + (state.polyExam !== "all" ? 1 : 0) + (state.polySort !== "hard" ? 1 : 0);
+  const pAdv = (!state.polyHardOnly ? 1 : 0) + (state.polyExam !== "all" ? 1 : 0) + (state.polySort !== "hard" ? 1 : 0);
   document.getElementById("btnPolyFilterDrawer").classList.toggle("has-active", pAdv > 0);
   document.getElementById("polyFilterActiveCount").textContent = pAdv > 0 ? `(${pAdv}) ` : "";
-  document.getElementById("btnPolyShowExAll").textContent = state.polyShowExamples ? "收起例句 ▴" : "显示例句 ▾";
+  document.getElementById("btnPolyShowExAll").textContent = state.polyShowExamples ? "收起多余例句 ▴" : "展开全部例句 ▾";
 
   const grid = document.getElementById("polyGrid");
   if (!filtered.length) {
@@ -2342,7 +2366,7 @@ function renderPoly() {
     const isM = state.polyMastered.has(it.w);
     const isS = state.polyStarred.has(it.w);
     const isExp = state.polyExpanded.has(it.w);
-    const shownOccs = isExp ? it.occs.slice(0, 8) : (state.polyShowExamples ? it.occs.slice(0, 1) : []);
+    const shownOccs = (isExp || state.polyShowExamples) ? it.occs.slice(0, 8) : it.occs.slice(0, 1);
 
     const examplesHtml = shownOccs.length ? `
       <div class="examples-drawer">
@@ -2351,40 +2375,49 @@ function renderPoly() {
             <span class="example-src src-${o[0]}">${o[0] === 1 ? "英一" : "英二"} ${o[1]} · ${escapeHtml(o[2])}</span>
             ${highlightSentence(o[4], o[3])}
           </div>`).join("")}
-      </div>` : "";
+      </div>` : `<div class="example-box" style="color:var(--ink-3);">暂无真题原句</div>`;
 
-    const polyTone = it.cat === "动词生义" ? "high" : (it.cat === "名词动用" ? "poly" : (it.cat === "政经高频" ? "mid" : "low"));
+    const polyTone = it.hard ? "poly" : "low";
+    const examTag = [
+      it.occs.some(o => o[0] === 1) ? "英一" : "",
+      it.occs.some(o => o[0] === 2) ? "英二" : "",
+    ].filter(Boolean).join(" / ") || "考研真题";
 
     return `
       <article class="word-card ${isM ? "mastered" : ""}" data-tone="${polyTone}" data-key="${escapeHtml(it.w)}">
-        <div class="card-eyebrow">
-          <div class="card-eyebrow-meta">
-            <span>${escapeHtml(it.cat)}</span>
+        <div class="card-left-pane">
+          <div class="card-eyebrow">
+            <div class="card-eyebrow-meta">
+              <span>${examTag}</span>
+            </div>
+            <div class="card-right">
+              <button class="icon-btn ${isS ? "starred" : ""}" data-pstar="${escapeHtml(it.w)}" title="收藏">
+                <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              ${isM
+                ? `<button class="slash-btn restore-btn" data-pmaster="${escapeHtml(it.w)}" title="恢复到待背列表">恢复</button>`
+                : `<button class="slash-btn" data-pmaster="${escapeHtml(it.w)}" title="标熟并斩掉，不再出现">斩</button>`}
+            </div>
           </div>
-          <div class="card-right">
-            <button class="icon-btn ${isS ? "starred" : ""}" data-pstar="${escapeHtml(it.w)}" title="收藏">
-              <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </button>
-            ${isM
-              ? `<button class="slash-btn restore-btn" data-pmaster="${escapeHtml(it.w)}" title="恢复到待背列表">恢复</button>`
-              : `<button class="slash-btn" data-pmaster="${escapeHtml(it.w)}" title="标熟并斩掉，不再出现">斩</button>`}
+          <div class="card-top">
+            <div class="phrase-block">
+              <div class="phrase-text">${escapeHtml(it.w)} <span class="word-pos-pill">${escapeHtml(it.pos)}</span></div>
+            </div>
+          </div>
+          <div class="poly-callout">
+            <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span><span>${escapeHtml(it.fam)}</span></div>
+            <div class="poly-row-exm"><span class="poly-tag-lbl">生义</span><span>${escapeHtml(it.exm)}</span></div>
           </div>
         </div>
-        <div class="card-top">
-          <div class="phrase-block">
-            <div class="phrase-text">${escapeHtml(it.w)} <span class="word-pos-pill">${escapeHtml(it.pos)}</span></div>
-          </div>
-        </div>
-        <div class="poly-callout">
-          <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span><span>${escapeHtml(it.fam)}</span></div>
-          <div class="poly-row-exm"><span class="poly-tag-lbl">生义</span><span>${escapeHtml(it.exm)}</span></div>
-        </div>
-        ${examplesHtml}
-        <div class="card-foot">
-          <div class="card-foot-meta"><span>${it.occs.length ? `${it.occs.length} 条真题语境` : "考研核心生义"}</span></div>
-          <button class="ex-toggle-btn" data-pexpand="${escapeHtml(it.w)}">
-            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
-          </button>
+        <div class="card-right-pane">
+          ${examplesHtml}
+          ${it.occs.length > 1 ? `
+            <div class="right-pane-foot">
+              <span>共 ${it.occs.length} 条真题语境</span>
+              <button class="ex-toggle-btn" data-pexpand="${escapeHtml(it.w)}">
+                ${isExp ? "收起多余例句 ▴" : `展开其余 ${Math.min(it.occs.length - 1, 7)} 条例句 ▾`}
+              </button>
+            </div>` : ""}
         </div>
       </article>`;
   }).join("");
@@ -2683,11 +2716,6 @@ document.getElementById("wordGrid").addEventListener("click", e => {
 });
 
 // Poly controls
-document.getElementById("polyCatTabs").addEventListener("click", e => {
-  const btn = e.target.closest(".seg-btn"); if (!btn) return;
-  document.querySelectorAll("#polyCatTabs .seg-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active"); state.polyCat = btn.dataset.pcat; renderPoly();
-});
 
 document.getElementById("polyExamTabs").addEventListener("click", e => {
   const btn = e.target.closest(".seg-btn"); if (!btn) return;
