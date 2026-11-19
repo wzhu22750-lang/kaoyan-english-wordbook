@@ -452,23 +452,58 @@
   }
   .family-chip.active span { color: rgba(42, 36, 27, 0.72); }
 
-  /* Controls Bar */
+  /* Controls Bar — Single Calm Primary Row + Collapsible Advanced Drawer */
   .controls {
     background: var(--bg-elevated);
     border: none;
     border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: 20px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
   }
 
   .controls-row {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     flex-wrap: wrap;
+  }
+
+  .controls-drawer {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+  .controls-drawer.open {
+    display: flex;
+  }
+
+  .filter-toggle-btn {
+    border: 1px solid var(--border);
+    background: var(--paper);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background-color 0.14s ease, color 0.14s ease;
+  }
+  .filter-toggle-btn:hover { background: var(--paper-2); color: var(--ink); }
+  .filter-toggle-btn.has-active {
+    background: var(--sage);
+    border-color: transparent;
+    color: #2A241B;
+    font-weight: 600;
   }
 
   .search-box {
@@ -643,25 +678,25 @@
     margin-left: 10px;
   }
 
-  /* Wordbook Grid */
+  /* Wordbook Grid — Generous Editorial Whitespace */
   .word-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    gap: 22px;
   }
   .word-grid.list-view {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
   }
 
   .word-card {
     background: var(--bg-elevated);
     border: none;
-    border-radius: var(--radius);
-    padding: 22px 24px;
+    border-radius: 26px;
+    padding: 28px 32px 22px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     position: relative;
     overflow: hidden;
     transition: background-color 0.16s ease, box-shadow 0.2s ease;
@@ -673,7 +708,7 @@
   .word-card.mastered {
     border: 1px dashed var(--border-strong);
   }
-  .word-card.mastered .phrase-text { opacity: 0.65; }
+  .word-card.mastered .phrase-text { opacity: 0.6; }
 
   /* Silky Ink-Slash ("斩") Animation — Soft Editorial Edition */
   .slash-btn {
@@ -865,11 +900,11 @@
 
   .phrase-text {
     font-family: var(--font-serif);
-    font-size: 30px;
+    font-size: 34px;
     font-weight: 500;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     color: var(--ink);
-    line-height: 1.08;
+    line-height: 1.05;
   }
   .phrase-prep {
     color: var(--ink-2);
@@ -888,7 +923,7 @@
   .freq-badge {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 600;
     padding: 2px 11px;
     border-radius: 999px;
@@ -916,10 +951,33 @@
   .icon-btn.starred { color: #2A241B; background: var(--lemon); }
   .icon-btn.checked { color: #2A241B; background: var(--sage); }
 
-  .card-meta {
+  .zh-meaning {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--ink);
+    padding: 2px 0 4px;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* Quiet Editorial Card Footer (replaces loud pill stacks) */
+  .card-foot {
     display: flex;
     align-items: center;
-    gap: 7px;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 12px;
+    margin-top: auto;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+  }
+
+  .card-foot-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
@@ -933,60 +991,68 @@
     border: 1px solid var(--border);
   }
   .pill-phrasal { background: var(--sage); color: #2A241B; border-color: transparent; }
-  .pill-prep    { background: var(--paper); color: var(--ink-2); }
+  .pill-prep    { background: var(--blush); color: #2A241B; border-color: transparent; }
   .pill-three   { background: var(--lilac); color: #2A241B; border-color: transparent; }
-  .pill-cloze   { background: var(--pink); color: #2A241B; border-color: transparent; }
-  .pill-sage    { background: var(--sage); color: #2A241B; border-color: transparent; }
-  .pill-amber   { background: var(--blush); color: #2A241B; border-color: transparent; }
 
-  .exam-split {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 13.5px;
-    color: var(--ink-3);
+  .cloze-dot-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    background: var(--pink);
+    color: #2A241B;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 9px;
+    border-radius: 999px;
   }
-  .exam-tag-1 { color: var(--ink-2); font-weight: 500; }
-  .exam-tag-2 { color: var(--ink-2); font-weight: 500; }
 
-  .zh-meaning {
-    font-size: 14.5px;
+  .ex-toggle-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 12px;
     font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 6px;
+    transition: color 0.14s ease, background-color 0.14s ease;
+  }
+  .ex-toggle-btn:hover {
     color: var(--ink);
-    transition: filter 0.2s ease, opacity 0.2s ease;
+    background: var(--bg-subtle);
   }
 
-  /* Polysemy Contrast Box — Soft Editorial Blush Tint */
+  /* Polysemy Contrast — Quiet, Breathable Two-Line Pair */
   .poly-callout {
-    background: color-mix(in srgb, var(--blush) 38%, transparent);
-    border: 1px dashed var(--border);
-    border-radius: 16px;
-    padding: 11px 14px;
-    font-size: 12.5px;
-    line-height: 1.55;
+    background: transparent;
+    border: none;
+    border-left: 2px solid var(--blush);
+    border-radius: 0;
+    padding: 2px 0 2px 14px;
+    font-size: 13px;
+    line-height: 1.6;
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
   .poly-row-fam {
     color: var(--ink-3);
+    font-size: 12.5px;
   }
   .poly-row-exm {
     color: var(--ink);
-    font-weight: 600;
-    font-size: 13.5px;
+    font-weight: 500;
+    font-size: 15.5px;
     transition: filter 0.2s ease, opacity 0.2s ease;
   }
   .poly-tag-lbl {
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
-    margin-right: 6px;
-    color: var(--ink);
+    margin-right: 8px;
+    color: var(--ink-3);
   }
-  .poly-row-fam .poly-tag-lbl { color: var(--ink-3); }
+  .poly-row-exm .poly-tag-lbl { color: var(--ink-2); }
 
   body.blur-mode .zh-meaning:not(.revealed),
   body.blur-mode .poly-row-exm:not(.revealed) {
@@ -1001,12 +1067,18 @@
     opacity: 1;
   }
 
+  .examples-drawer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
   .example-box {
-    background: transparent;
+    background: color-mix(in srgb, var(--paper) 65%, transparent);
     border: none;
-    border-top: 1px dashed var(--border);
-    border-radius: 0;
-    padding: 11px 2px 2px;
+    border-radius: 14px;
+    padding: 12px 15px;
     font-family: var(--font-serif);
     font-size: 15.5px;
     line-height: 1.62;
@@ -1416,7 +1488,7 @@
       <div class="controls-row">
         <div class="search-box">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="searchInput" placeholder="搜索短语、动词、介词、中文释义或年份（如 take over、put、2024）..." />
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索短语或释义（如 take over、put、导致）..." />
           <button class="search-clear" id="searchClear" aria-label="清除搜索">×</button>
         </div>
 
@@ -1426,17 +1498,6 @@
           <button class="seg-btn" data-cat="prep">动介搭配<span class="cnt" id="cntPrep"></span></button>
           <button class="seg-btn" data-cat="three">三词短语<span class="cnt" id="cntThree"></span></button>
         </div>
-      </div>
-
-      <div class="controls-row">
-        <button class="toggle-pill" id="btnClozeOnly">完形直接挖空 <span id="cntClozeOnly" style="font-family:var(--font-mono);font-size:11px;"></span></button>
-        <button class="toggle-pill" id="btnPolyOnly">含熟词生义 <span id="cntPolyOnly" style="font-family:var(--font-mono);font-size:11px;"></span></button>
-
-        <div class="seg-group" id="examTabs">
-          <button class="seg-btn active" data-exam="all">英一 + 英二</button>
-          <button class="seg-btn" data-exam="1">英语（一）</button>
-          <button class="seg-btn" data-exam="2">英语（二）</button>
-        </div>
 
         <div class="seg-group" id="statusTabs">
           <button class="seg-btn active" data-status="unmastered">待背</button>
@@ -1445,30 +1506,46 @@
           <button class="seg-btn" data-status="all">全部</button>
         </div>
 
-        <select class="select-ctrl" id="freqSelect">
-          <option value="all">所有考频</option>
-          <option value="5">高频（≥ 5次）</option>
-          <option value="3">中高（≥ 3次）</option>
-          <option value="2">复现（≥ 2次）</option>
-          <option value="1">单次（= 1次）</option>
-        </select>
-
-        <select class="select-ctrl" id="sortSelect">
-          <option value="freq">按考频降序</option>
-          <option value="alpha">按字母 A–Z</option>
-          <option value="prep">按介词分组</option>
-          <option value="recent">按最新年份</option>
-        </select>
+        <button class="filter-toggle-btn" id="btnFilterDrawer">筛选 <span id="filterActiveCount"></span>▾</button>
       </div>
 
-      <div class="prep-strip" id="prepStrip"></div>
+      <div class="controls-drawer" id="filterDrawer">
+        <div class="controls-row">
+          <button class="toggle-pill" id="btnClozeOnly">完形直接挖空 <span id="cntClozeOnly" style="font-family:var(--font-serif);font-style:italic;font-size:12px;"></span></button>
+          <button class="toggle-pill" id="btnPolyOnly">含熟词生义 <span id="cntPolyOnly" style="font-family:var(--font-serif);font-style:italic;font-size:12px;"></span></button>
+
+          <div class="seg-group" id="examTabs">
+            <button class="seg-btn active" data-exam="all">英一 + 英二</button>
+            <button class="seg-btn" data-exam="1">英语（一）</button>
+            <button class="seg-btn" data-exam="2">英语（二）</button>
+          </div>
+
+          <select class="select-ctrl" id="freqSelect">
+            <option value="all">所有考频</option>
+            <option value="5">高频（≥ 5次）</option>
+            <option value="3">中高（≥ 3次）</option>
+            <option value="2">复现（≥ 2次）</option>
+            <option value="1">单次（= 1次）</option>
+          </select>
+
+          <select class="select-ctrl" id="sortSelect">
+            <option value="freq">按考频降序</option>
+            <option value="alpha">按字母 A–Z</option>
+            <option value="prep">按介词分组</option>
+            <option value="recent">按最新年份</option>
+          </select>
+        </div>
+
+        <div class="prep-strip" id="prepStrip"></div>
+      </div>
     </section>
 
     <div class="results-bar">
       <div>
         <span id="resultsCount">显示 — 条词组</span>
-        <button class="reset-link" id="btnReset" style="display:none;">清除全部筛选</button>
+        <button class="reset-link" id="btnReset" style="display:none;">清除筛选</button>
       </div>
+      <button class="ex-toggle-btn" id="btnShowExAll">显示例句</button>
     </div>
 
     <section class="word-grid" id="wordGrid"></section>
@@ -1483,25 +1560,8 @@
       <div class="controls-row">
         <div class="search-box">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="polySearchInput" placeholder="搜索熟词生义单词或中文（如 address、bill、coin、法案、遏制）..." />
+          <input type="text" class="search-input" id="polySearchInput" placeholder="搜索单词或中文（如 address、bill、法案）..." />
           <button class="search-clear" id="polySearchClear" aria-label="清除搜索">×</button>
-        </div>
-
-        <div class="seg-group" id="polyCatTabs">
-          <button class="seg-btn active" data-pcat="all">全部<span class="cnt" id="cntPolyAll"></span></button>
-          <button class="seg-btn" data-pcat="动词生义">动词生义</button>
-          <button class="seg-btn" data-pcat="名词动用">名词动用</button>
-          <button class="seg-btn" data-pcat="名词生义">名词生义</button>
-          <button class="seg-btn" data-pcat="形副生义">形副生义</button>
-          <button class="seg-btn" data-pcat="core">政经与核心多义</button>
-        </div>
-      </div>
-
-      <div class="controls-row">
-        <div class="seg-group" id="polyExamTabs">
-          <button class="seg-btn active" data-exam="all">英一 + 英二</button>
-          <button class="seg-btn" data-exam="1">英语（一）</button>
-          <button class="seg-btn" data-exam="2">英语（二）</button>
         </div>
 
         <div class="seg-group" id="polyStatusTabs">
@@ -1511,15 +1571,37 @@
           <button class="seg-btn" data-status="all">全部</button>
         </div>
 
-        <select class="select-ctrl" id="polySortSelect">
-          <option value="alpha">按字母 A–Z</option>
-          <option value="recent">按最新年份</option>
-        </select>
+        <button class="filter-toggle-btn" id="btnPolyFilterDrawer">筛选 <span id="polyFilterActiveCount"></span>▾</button>
+      </div>
+
+      <div class="controls-drawer" id="polyFilterDrawer">
+        <div class="controls-row">
+          <div class="seg-group" id="polyCatTabs">
+            <button class="seg-btn active" data-pcat="all">全部<span class="cnt" id="cntPolyAll"></span></button>
+            <button class="seg-btn" data-pcat="动词生义">动词生义</button>
+            <button class="seg-btn" data-pcat="名词动用">名词动用</button>
+            <button class="seg-btn" data-pcat="名词生义">名词生义</button>
+            <button class="seg-btn" data-pcat="形副生义">形副生义</button>
+            <button class="seg-btn" data-pcat="core">政经多义</button>
+          </div>
+
+          <div class="seg-group" id="polyExamTabs">
+            <button class="seg-btn active" data-exam="all">英一 + 英二</button>
+            <button class="seg-btn" data-exam="1">英语（一）</button>
+            <button class="seg-btn" data-exam="2">英语（二）</button>
+          </div>
+
+          <select class="select-ctrl" id="polySortSelect">
+            <option value="alpha">按字母 A–Z</option>
+            <option value="recent">按最新年份</option>
+          </select>
+        </div>
       </div>
     </section>
 
     <div class="results-bar">
       <span id="polyResultsCount"></span>
+      <button class="ex-toggle-btn" id="btnPolyShowExAll">显示例句</button>
     </div>
 
     <section class="word-grid" id="polyGrid"></section>
@@ -1605,6 +1687,8 @@ const state = {
   polyExpanded: new Set(),
   // Shared
   blur: false,
+  showExamples: false,
+  polyShowExamples: false,
   mastered: new Set(),
   starred: new Set(),
   polyMastered: new Set(),
@@ -1862,6 +1946,15 @@ function renderPhrases() {
     state.freqMin !== "all" || state.prep !== "all" || state.verb !== "all" ||
     state.search.trim() !== "" || state.clozeOnly || state.polyOnly;
   document.getElementById("btnReset").style.display = hasFilter ? "inline" : "none";
+
+  // Count active secondary filters in the drawer
+  const advCnt = (state.clozeOnly ? 1 : 0) + (state.polyOnly ? 1 : 0) + (state.exam !== "all" ? 1 : 0) +
+    (state.freqMin !== "all" ? 1 : 0) + (state.prep !== "all" ? 1 : 0) + (state.sort !== "freq" ? 1 : 0);
+  const fBtn = document.getElementById("btnFilterDrawer");
+  fBtn.classList.toggle("has-active", advCnt > 0);
+  document.getElementById("filterActiveCount").textContent = advCnt > 0 ? `(${advCnt}) ` : "";
+  document.getElementById("btnShowExAll").textContent = state.showExamples ? "收起例句 ▴" : "显示例句 ▾";
+
   const filtTotal = filtered.reduce((s, x) => s + x.count, 0);
   document.getElementById("resultsCount").textContent = `共 ${filtered.length} 个词组 · 累计 ${filtTotal} 次真题出现`;
 
@@ -1880,32 +1973,30 @@ function renderPhraseCards(list) {
     const isM = state.mastered.has(it.p);
     const isS = state.starred.has(it.p);
     const isExp = state.expanded.has(it.p);
+    const showAnyEx = state.showExamples || isExp;
     const freqClass = it.count >= 8 ? "freq-high" : (it.count >= 3 ? "freq-mid" : "freq-low");
-    const first = it.occs[0];
-    const extraCnt = it.occs.length - 1;
 
-    const splitHtml = [
-      it.c1 > 0 ? `<span class="exam-tag-1">英一 ${it.c1}</span>` : "",
-      it.c2 > 0 ? `<span class="exam-tag-2">英二 ${it.c2}</span>` : "",
+    const splitParts = [
+      catLabel(it.c),
+      [it.c1 > 0 ? `英一 ${it.c1}` : "", it.c2 > 0 ? `英二 ${it.c2}` : ""].filter(Boolean).join(" / "),
     ].filter(Boolean).join(" · ");
 
-    // Cloze direct-blank tag
     let clozeBadgeHtml = "";
     if (it.czScoped.length > 0) {
       const hasAns = it.czScoped.some(c => c[3] === 1);
-      const tags = it.czScoped.slice(0, 2).map(c => `${c[0] === 1 ? "英一" : "英二"}${String(c[1]).slice(2)} Q${c[2]}${c[3] ? "✓" : ""}`).join(" / ");
-      clozeBadgeHtml = `<span class="pill pill-cloze">${hasAns ? "完形挖空正解" : "完形挖空选项"} · ${tags}</span>`;
+      clozeBadgeHtml = `<span class="cloze-dot-tag">${hasAns ? "完形正解" : "完形选项"}</span>`;
     }
 
     const polyHtml = it.poly ? `
       <div class="poly-callout">
         <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span>${escapeHtml(it.poly[0])}</div>
-        <div class="poly-row-exm"><span class="poly-tag-lbl">考研生义</span>${escapeHtml(it.poly[1])}</div>
+        <div class="poly-row-exm"><span class="poly-tag-lbl">生义</span>${escapeHtml(it.poly[1])}</div>
       </div>` : "";
 
-    const extraHtml = isExp && extraCnt > 0 ? `
-      <div class="extra-examples">
-        ${it.occs.slice(1).map(o => `
+    const shownOccs = isExp ? it.occs : (state.showExamples ? it.occs.slice(0, 1) : []);
+    const examplesHtml = shownOccs.length ? `
+      <div class="examples-drawer">
+        ${shownOccs.map(o => `
           <div class="example-box">
             <span class="example-src src-${o[0]}">${o[0] === 1 ? "英一" : "英二"} ${o[1]} · ${escapeHtml(o[2])}</span>
             ${highlightSentence(o[4], o[3])}
@@ -1928,19 +2019,20 @@ function renderPhraseCards(list) {
               : `<button class="slash-btn" data-master="${escapeHtml(it.p)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
         </div>
-        <div class="card-meta">
-          <span class="pill pill-${it.c}">${catLabel(it.c)}</span>
-          ${clozeBadgeHtml}
-          <span class="exam-split">${splitHtml}</span>
-        </div>
+
         <div class="zh-meaning">${escapeHtml(it.z)}</div>
         ${polyHtml}
-        <div class="example-box">
-          <span class="example-src src-${first[0]}">${first[0] === 1 ? "英一" : "英二"} ${first[1]} · ${escapeHtml(first[2])}</span>
-          ${highlightSentence(first[4], first[3])}
+        ${examplesHtml}
+
+        <div class="card-foot">
+          <div class="card-foot-meta">
+            <span>${splitParts}</span>
+            ${clozeBadgeHtml}
+          </div>
+          <button class="ex-toggle-btn" data-expand="${escapeHtml(it.p)}">
+            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
+          </button>
         </div>
-        ${extraHtml}
-        ${extraCnt > 0 ? `<button class="more-occ-btn" data-expand="${escapeHtml(it.p)}">${isExp ? "收起其他原句 ▴" : `展开全部 ${it.occs.length} 条真题原句（+${extraCnt}）▾`}</button>` : ""}
       </article>`;
   }).join("");
 
@@ -2140,6 +2232,11 @@ function renderPoly() {
   document.getElementById("polyResultsCount").textContent =
     `共 ${filtered.length} 个单词熟词生义`;
 
+  const pAdv = (state.polyCat !== "all" ? 1 : 0) + (state.polyExam !== "all" ? 1 : 0) + (state.polySort !== "alpha" ? 1 : 0);
+  document.getElementById("btnPolyFilterDrawer").classList.toggle("has-active", pAdv > 0);
+  document.getElementById("polyFilterActiveCount").textContent = pAdv > 0 ? `(${pAdv}) ` : "";
+  document.getElementById("btnPolyShowExAll").textContent = state.polyShowExamples ? "收起例句 ▴" : "显示例句 ▾";
+
   const grid = document.getElementById("polyGrid");
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty-state">当前列表已全部斩完或无匹配词条。</div>`;
@@ -2150,12 +2247,11 @@ function renderPoly() {
     const isM = state.polyMastered.has(it.w);
     const isS = state.polyStarred.has(it.w);
     const isExp = state.polyExpanded.has(it.w);
-    const first = it.occs[0];
-    const extraCnt = it.occs.length - 1;
+    const shownOccs = isExp ? it.occs.slice(0, 8) : (state.polyShowExamples ? it.occs.slice(0, 1) : []);
 
-    const extraHtml = isExp && extraCnt > 0 ? `
-      <div class="extra-examples">
-        ${it.occs.slice(1, 12).map(o => `
+    const examplesHtml = shownOccs.length ? `
+      <div class="examples-drawer">
+        ${shownOccs.map(o => `
           <div class="example-box">
             <span class="example-src src-${o[0]}">${o[0] === 1 ? "英一" : "英二"} ${o[1]} · ${escapeHtml(o[2])}</span>
             ${highlightSentence(o[4], o[3])}
@@ -2166,10 +2262,9 @@ function renderPoly() {
       <article class="word-card ${isM ? "mastered" : ""}" data-key="${escapeHtml(it.w)}">
         <div class="card-top">
           <div class="phrase-block">
-            <div class="phrase-text">${escapeHtml(it.w)} <span style="font-family:var(--font-mono);font-size:13px;color:var(--ink-3);font-weight:500;">${escapeHtml(it.pos)}</span></div>
+            <div class="phrase-text">${escapeHtml(it.w)} <span style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:var(--ink-3);font-weight:400;">${escapeHtml(it.pos)}</span></div>
           </div>
           <div class="card-right">
-            <span class="pill pill-three">${escapeHtml(it.cat)}</span>
             <button class="icon-btn ${isS ? "starred" : ""}" data-pstar="${escapeHtml(it.w)}" title="收藏">
               <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </button>
@@ -2179,15 +2274,16 @@ function renderPoly() {
           </div>
         </div>
         <div class="poly-callout">
-          <div class="poly-row-fam"><span class="poly-tag-lbl">常见熟义</span>${escapeHtml(it.fam)}</div>
+          <div class="poly-row-fam"><span class="poly-tag-lbl">熟义</span>${escapeHtml(it.fam)}</div>
           <div class="poly-row-exm"><span class="poly-tag-lbl">考研生义</span>${escapeHtml(it.exm)}</div>
         </div>
-        <div class="example-box">
-          <span class="example-src src-${first[0]}">${first[0] === 1 ? "英一" : "英二"} ${first[1]} · ${escapeHtml(first[2])}</span>
-          ${highlightSentence(first[4], first[3])}
+        ${examplesHtml}
+        <div class="card-foot">
+          <div class="card-foot-meta"><span>${escapeHtml(it.cat)}</span></div>
+          <button class="ex-toggle-btn" data-pexpand="${escapeHtml(it.w)}">
+            ${isExp ? "收起例句 ▴" : "真题例句 ▾"}
+          </button>
         </div>
-        ${extraHtml}
-        ${extraCnt > 0 ? `<button class="more-occ-btn" data-pexpand="${escapeHtml(it.w)}">${isExp ? "收起其他原句 ▴" : `展开更多真题例句（+${Math.min(extraCnt, 11)}）▾`}</button>` : ""}
       </article>`;
   }).join("");
 }
@@ -2290,6 +2386,24 @@ document.getElementById("btnReset").addEventListener("click", () => {
   document.querySelector('#examTabs .seg-btn[data-exam="all"]').classList.add("active");
   document.querySelector('#statusTabs .seg-btn[data-status="unmastered"]').classList.add("active");
   renderPhrases();
+});
+
+document.getElementById("btnFilterDrawer").addEventListener("click", () => {
+  document.getElementById("filterDrawer").classList.toggle("open");
+});
+
+document.getElementById("btnShowExAll").addEventListener("click", () => {
+  state.showExamples = !state.showExamples;
+  renderPhrases();
+});
+
+document.getElementById("btnPolyFilterDrawer").addEventListener("click", () => {
+  document.getElementById("polyFilterDrawer").classList.toggle("open");
+});
+
+document.getElementById("btnPolyShowExAll").addEventListener("click", () => {
+  state.polyShowExamples = !state.polyShowExamples;
+  renderPoly();
 });
 
 document.getElementById("analyticsToggle").addEventListener("click", () => {
