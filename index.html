@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>考研英语十年真题 · 动介短语 × 单词熟词生义</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -77,6 +77,17 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  button, input, select {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
   body {
     font-family: var(--font-sans);
     background: var(--bg);
@@ -84,6 +95,22 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  body.modal-open { overflow: hidden; }
+
+  .stat-value, .badge-num, .cnt, .freq-badge, .bar-num, #fcCounter, .ms-num, .ms-pct {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .brand h1, .fc-phrase { text-wrap: balance; }
+  .zh-meaning, .poly-row-exm { text-wrap: pretty; }
+
+  .show-sm { display: none; }
+  .mob-only-meta { display: none; }
+
+  .btn:active, .icon-btn:active, .seg-btn:active, .mod-btn:active, .scope-btn:active {
+    transform: scale(0.96);
   }
 
   .container {
@@ -251,6 +278,52 @@
   }
 
   .icon { width: 15px; height: 15px; flex-shrink: 0; }
+
+  /* Mobile Compact Progress Summary (hidden on desktop) */
+  .mobile-summary {
+    display: none;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 11px 14px;
+    margin: 12px 0 10px;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .mobile-summary-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+  .ms-left {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .ms-num {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .ms-pct {
+    margin-left: 4px;
+    font-weight: 600;
+    font-size: 11.5px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--sage);
+    color: #2A241B;
+  }
+  .ms-right {
+    font-size: 12px;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
 
   /* Stats Hero Strip — Soft Editorial 4-Pastel Riso Cards */
   .stats-strip {
@@ -723,14 +796,16 @@
   .word-card[data-tone="poly"]::before { background: var(--pink); }
   .word-card[data-tone="low"]::before  { background: var(--sage); }
 
-  .word-card:hover {
-    transform: translate3d(0, -3px, 0);
-    border-color: color-mix(in srgb, var(--ink) 20%, transparent);
-    box-shadow: 0 14px 34px rgba(42, 36, 27, 0.075);
-  }
-  [data-theme="dark"] .word-card:hover {
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) {
+    .word-card:hover {
+      transform: translate3d(0, -3px, 0);
+      border-color: color-mix(in srgb, var(--ink) 20%, transparent);
+      box-shadow: 0 14px 34px rgba(42, 36, 27, 0.075);
+    }
+    [data-theme="dark"] .word-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
+    }
   }
   .word-card.mastered {
     border: 1px dashed var(--border-strong);
@@ -910,6 +985,19 @@
       transition: none !important;
     }
   }
+
+  .card-header-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "meta actions"
+      "phrase phrase";
+    align-items: center;
+    gap: 10px 12px;
+  }
+  .card-header-grid .card-eyebrow-meta { grid-area: meta; min-height: 28px; }
+  .card-header-grid .card-right { grid-area: actions; }
+  .card-header-grid .phrase-block { grid-area: phrase; min-width: 0; }
 
   .card-eyebrow {
     display: flex;
@@ -1131,10 +1219,12 @@
     cursor: pointer;
     user-select: none;
   }
-  body.blur-mode .zh-meaning:not(.revealed):hover,
-  body.blur-mode .poly-row-exm:not(.revealed):hover {
-    filter: blur(0);
-    opacity: 1;
+  @media (hover: hover) {
+    body.blur-mode .zh-meaning:not(.revealed):hover,
+    body.blur-mode .poly-row-exm:not(.revealed):hover {
+      filter: blur(0);
+      opacity: 1;
+    }
   }
 
   .examples-drawer {
@@ -1295,7 +1385,7 @@
     border-radius: var(--radius-sm);
     padding: 10px 12px;
     cursor: pointer;
-    transition: all 0.14s ease;
+    transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -1505,21 +1595,493 @@
     .word-grid { grid-template-columns: 1fr; }
     .cloze-opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  @media (max-width: 720px) {
-    .fc-body { grid-template-columns: 1fr; }
-    .fc-right-pane {
-      border-left: none;
-      border-top: 1px solid var(--border);
-      padding: 22px 24px;
+
+  @media (max-width: 768px) {
+    .hide-sm { display: none !important; }
+    .show-sm { display: inline; }
+    .desk-only-meta, .desk-freq { display: none !important; }
+    .mob-only-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-width: 0;
     }
-    .fc-left-pane { padding: 24px; }
+
+    .container {
+      padding: 0 14px calc(56px + env(safe-area-inset-bottom));
+    }
+
+    /* Compact 2-row sticky header */
+    .header-inner {
+      padding: max(8px, env(safe-area-inset-top)) 14px 9px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "title actions"
+        "nav scope";
+      align-items: center;
+      gap: 8px;
+    }
+    .brand { display: contents; }
+    .brand-title-wrap { grid-area: title; min-width: 0; gap: 7px; }
+    .brand-swatches { gap: 3px; }
+    .brand-swatches i { width: 7px; height: 7px; }
+    .brand h1 { font-size: 19px; white-space: nowrap; }
+
+    .header-actions {
+      grid-area: actions;
+      flex-wrap: nowrap;
+      gap: 6px;
+    }
+    .header-actions .btn {
+      padding: 6px 10px;
+      font-size: 12.5px;
+      min-height: 36px;
+      gap: 4px;
+    }
+    #btnTheme {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .module-nav {
+      grid-area: nav;
+      width: auto;
+      justify-self: start;
+      display: inline-flex;
+      padding: 3px;
+      gap: 2px;
+    }
+    .module-nav .badge-num { display: none; }
+    .mod-btn {
+      justify-content: center;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      min-height: 32px;
+      gap: 4px;
+    }
+    .scope-switch {
+      grid-area: scope;
+      justify-self: end;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .scope-btn {
+      padding: 5px 9px;
+      font-size: 11.5px;
+      min-height: 32px;
+      white-space: nowrap;
+    }
+
+    /* Stats -> Single Compact Mobile Summary */
+    .stats-strip { display: none; }
+    .mobile-summary {
+      display: flex;
+      padding: 9px 13px;
+      margin: 10px 0 8px;
+      gap: 5px;
+    }
+
+    /* Analytics Panel */
+    .analytics-panel {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .analytics-head {
+      padding: 8px 14px;
+      min-height: 38px;
+    }
+    .analytics-title { font-size: 14.5px; }
+    .analytics-body { padding: 12px 14px 14px; }
+    .analytics-grid { gap: 16px; }
+    .chart-bars { grid-template-columns: 1fr; gap: 4px; }
+    .bar-row {
+      grid-template-columns: minmax(96px, 120px) 1fr 28px;
+      padding: 5px 6px;
+      min-height: 34px;
+    }
+    .family-chips { gap: 6px; }
+    .family-chip { padding: 6px 11px; min-height: 34px; }
+
+    /* Controls Bar */
+    .controls {
+      padding: 10px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .controls > .controls-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-box {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+    }
+    .search-input {
+      font-size: 16px;
+      padding: 8px 34px 8px 36px;
+      height: 40px;
+    }
+    .search-clear {
+      width: 32px;
+      height: 32px;
+      right: 4px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .search-clear.visible { display: inline-flex; }
+    .filter-toggle-btn {
+      grid-column: 2;
+      grid-row: 1;
+      height: 40px;
+      padding: 0 13px;
+      font-size: 13px;
+    }
+
+    #statusTabs, #polyStatusTabs {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-radius: 12px;
+      padding: 3px;
+      gap: 2px;
+    }
+    #statusTabs .seg-btn, #polyStatusTabs .seg-btn {
+      justify-content: center;
+      text-align: center;
+      padding: 6px 4px;
+      min-height: 34px;
+      font-size: 12.5px;
+      border-radius: 9px;
+    }
+
+    #catTabs {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      width: 100%;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-radius: 12px;
+      padding: 3px;
+      gap: 2px;
+    }
+    #catTabs::-webkit-scrollbar { display: none; }
+    #catTabs .seg-btn {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      min-height: 34px;
+      font-size: 12.5px;
+      border-radius: 9px;
+    }
+
+    .controls-drawer {
+      margin-top: 10px;
+      padding-top: 10px;
+      gap: 10px;
+    }
+    .controls-drawer .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .toggle-pill {
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
+    #examTabs, #polyExamTabs {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 12px;
+      padding: 3px;
+    }
+    #examTabs .seg-btn, #polyExamTabs .seg-btn {
+      text-align: center;
+      padding: 6px 4px;
+      min-height: 34px;
+      border-radius: 9px;
+    }
+    .select-ctrl {
+      flex: 1 1 calc(50% - 4px);
+      min-height: 38px;
+      font-size: 13.5px;
+      padding: 6px 12px;
+      border-radius: 12px;
+    }
+    .prep-strip {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-top: 10px;
+      gap: 6px;
+    }
+    .prep-strip::-webkit-scrollbar { display: none; }
+    .prep-chip {
+      flex-shrink: 0;
+      min-height: 32px;
+      padding: 5px 11px;
+    }
+
+    /* Results Bar */
+    .results-bar {
+      margin-bottom: 8px;
+      font-size: 12.5px;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+    .results-bar .ex-toggle-btn {
+      min-height: 34px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      flex-shrink: 0;
+    }
+
+    /* Focused Mobile Word Cards */
+    .word-grid { grid-template-columns: 1fr; gap: 12px; }
+    .word-card {
+      border-radius: 16px;
+      padding: 15px 16px 11px;
+      gap: 9px;
+    }
+    .card-header-grid {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "phrase actions";
+      align-items: flex-start;
+      gap: 6px 10px;
+    }
+    .card-header-grid .card-eyebrow-meta { display: none; }
+    .phrase-text {
+      font-size: 27px;
+      line-height: 1.16;
+      letter-spacing: -0.015em;
+      word-break: break-word;
+    }
+    .word-pos-pill {
+      font-size: 12.5px;
+      padding: 1px 7px;
+      vertical-align: 2px;
+    }
+    .card-right {
+      gap: 6px;
+      padding-top: 1px;
+    }
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: var(--paper);
+    }
+    .icon-btn.starred { border-color: transparent; }
+    .slash-btn {
+      height: 36px;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+    .zh-meaning {
+      font-size: 15.5px;
+      line-height: 1.58;
+      padding: 0;
+    }
+    .poly-callout {
+      border-radius: 11px;
+      padding: 10px 12px;
+      gap: 6px;
+    }
+    .poly-row-fam {
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .poly-row-exm {
+      font-size: 15.5px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .card-foot {
+      padding-top: 9px;
+      gap: 8px;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+    .mob-only-meta .freq-badge {
+      font-size: 12px;
+      padding: 1px 8px;
+    }
+    .mob-only-meta .cloze-dot-tag {
+      font-size: 10.5px;
+      padding: 1px 7px;
+    }
+    .mob-cat-text {
+      font-size: 11.5px;
+      color: var(--ink-3);
+    }
+    .card-foot .ex-toggle-btn {
+      min-height: 36px;
+      padding: 6px 10px;
+      margin: -4px -8px -4px 0;
+      font-size: 12.5px;
+      flex-shrink: 0;
+      border-radius: 8px;
+    }
+    .examples-drawer { gap: 8px; }
+    .example-box {
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .example-src {
+      font-size: 10.5px;
+      padding: 1px 7px;
+      margin-right: 6px;
+    }
+
+    /* Fullscreen Thumb-Friendly Flashcard Sheet */
+    .modal-backdrop {
+      padding: 0;
+      align-items: stretch;
+    }
+    .flashcard-shell {
+      max-width: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+    .fc-header {
+      padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+      flex-shrink: 0;
+    }
+    .fc-kbd-hint { display: none; }
+    #fcClose {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      background: var(--paper);
+    }
+    .fc-body {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      grid-template-columns: none;
+    }
+    .fc-left-pane {
+      padding: 24px 20px 20px;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+    .fc-phrase {
+      font-size: 34px;
+      line-height: 1.12;
+      word-break: break-word;
+    }
+    .fc-zh {
+      font-size: 18px;
+      line-height: 1.55;
+    }
+    .fc-right-pane {
+      padding: 18px 20px 24px;
+      border-left: none;
+      border-top: 1px dashed var(--border);
+      flex: 1;
+      justify-content: flex-start;
+    }
+    .fc-example {
+      font-size: 16px;
+      line-height: 1.68;
+      padding: 2px 0 2px 12px;
+    }
+    .fc-footer {
+      padding: 10px 14px max(14px, env(safe-area-inset-bottom));
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 46px;
+      gap: 8px;
+      align-items: center;
+    }
+    #fcPrev, #fcNext {
+      width: 46px;
+      height: 44px;
+      padding: 0;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .fc-actions {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    #fcStar {
+      width: 46px;
+      height: 44px;
+      padding: 0;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    #fcStar.starred {
+      background: var(--lemon);
+      border-color: transparent;
+      color: #2A241B;
+    }
+    #fcMaster {
+      flex: 1;
+      height: 44px;
+      justify-content: center;
+      font-size: 14px;
+      padding: 0 12px;
+    }
+
+    /* Undo Toast Safe Area */
+    .toast-host {
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      max-width: calc(100vw - 24px);
+    }
+    .toast-pill {
+      max-width: 100%;
+      padding: 9px 12px 9px 16px;
+      gap: 10px;
+    }
+    #toastText {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast-undo {
+      min-height: 32px;
+      padding: 5px 13px;
+      flex-shrink: 0;
+    }
   }
+
   @media (max-width: 560px) {
-    .container { padding: 0 14px 60px; }
-    .header-inner { padding: 10px 14px; }
-    .chart-bars { grid-template-columns: 1fr; }
     .cloze-opts { grid-template-columns: 1fr; }
-    .fc-phrase { font-size: 28px; }
+  }
+
+  @media (max-width: 374px) {
+    .brand-swatches { display: none; }
+    .header-actions .btn { padding: 5px 8px; }
+    .mod-btn { font-size: 12px; }
   }
 
   @media print {
@@ -1529,6 +2091,35 @@
     .word-card, .cloze-card { break-inside: avoid; box-shadow: none; border-color: #ccc; }
   }
 </style>
+<!-- Google Analytics 4 (with local/opt-out/debug governance) -->
+<script>
+  (function () {
+    var id = "G-57NXVD9C6X";
+    var params = new URLSearchParams(window.location.search);
+    var noTrackParam = params.get("no_track");
+    try {
+      if (noTrackParam === "1") localStorage.setItem("kaoyan_no_track", "1");
+      else if (noTrackParam === "0") localStorage.removeItem("kaoyan_no_track");
+    } catch (e) {}
+
+    var isDebug = params.get("ga_debug") === "1";
+    var isOptOut = false;
+    try { isOptOut = localStorage.getItem("kaoyan_no_track") === "1"; } catch (e) {}
+    var host = window.location.hostname;
+    var isLocal = window.location.protocol === "file:" || host === "localhost" || host === "127.0.0.1" || host === "";
+    var isDisabled = !isDebug && (isLocal || isOptOut);
+
+    window["ga-disable-" + id] = isDisabled;
+    window.__GA_STATE__ = { id: id, enabled: !isDisabled, debug: isDebug };
+  })();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-57NXVD9C6X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag("js", new Date());
+  gtag("config", "G-57NXVD9C6X", window.__GA_STATE__ && window.__GA_STATE__.debug ? { debug_mode: true } : {});
+</script>
 </head>
 <body>
 
@@ -1542,26 +2133,26 @@
           <i style="background:var(--blush)"></i>
           <i style="background:var(--sage)"></i>
         </span>
-        <h1>考研英语真题单词本</h1>
+        <h1>考研<span class="hide-sm">英语真题</span>单词本</h1>
       </div>
       <nav class="module-nav" id="moduleNav" aria-label="学习模块">
         <button class="mod-btn active" data-mod="phrases">动介词组 <span class="badge-num" id="navCntPhrases"></span></button>
-        <button class="mod-btn" data-mod="poly">单词熟词生义 <span class="badge-num" id="navCntPoly"></span></button>
+        <button class="mod-btn" data-mod="poly"><span class="hide-sm">单词</span>熟词生义 <span class="badge-num" id="navCntPoly"></span></button>
       </nav>
       <div class="scope-switch" role="group" aria-label="年份范围">
         <button class="scope-btn active" data-scope="10y">近十年</button>
-        <button class="scope-btn" data-scope="all">全部历年</button>
+        <button class="scope-btn" data-scope="all">全部<span class="hide-sm">历年</span></button>
       </div>
     </div>
 
     <div class="header-actions">
       <button class="btn" id="btnBlur" title="遮挡中文/考研生义，悬停或点击显示">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        背词遮挡
+        <span class="hide-sm">背词</span>遮挡
       </button>
       <button class="btn btn-primary" id="btnFlashcard">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
-        闪卡自测
+        闪卡<span class="hide-sm">自测</span>
       </button>
       <button class="btn" id="btnTheme" title="切换日间 / 夜间模式">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1572,6 +2163,7 @@
 
 <main class="container">
   <!-- Summary Metrics -->
+  <section class="mobile-summary" id="mobileSummary" aria-label="学习进度摘要"></section>
   <section class="stats-strip" id="statsStrip"></section>
 
   <!-- ==================== MODULE 1: 动介词组本 ==================== -->
@@ -1723,7 +2315,7 @@
     <div class="fc-header">
       <span id="fcCounter">1 / 20</span>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:12px;color:var(--ink-3);">空格翻面 · ←/→ 切题</span>
+        <span class="fc-kbd-hint" style="font-size:12px;color:var(--ink-3);">空格翻面 · ←/→ 切题</span>
         <button class="icon-btn" id="fcClose" aria-label="关闭">✕</button>
       </div>
     </div>
@@ -1735,7 +2327,7 @@
         </div>
         <div class="fc-phrase" id="fcPhrase">take over</div>
         <div class="fc-fam-hint" id="fcFamHint" style="display:none;"></div>
-        <div class="fc-hint" id="fcTapHint">点击卡片或按空格键查看释义</div>
+        <div class="fc-hint" id="fcTapHint">点击卡片<span class="hide-sm">或按空格键</span>查看释义<span class="show-sm"> · 左右滑动切题</span></div>
         <div class="fc-answer" id="fcAnswer">
           <div class="fc-zh" id="fcZh"></div>
           <div class="fc-hint" id="fcPolyNote" style="color:var(--ink-2);font-weight:500;"></div>
@@ -1748,12 +2340,12 @@
       </div>
     </div>
     <div class="fc-footer">
-      <button class="btn" id="fcPrev">← 上一个</button>
+      <button class="btn" id="fcPrev" aria-label="上一个">←<span class="hide-sm"> 上一个</span></button>
       <div class="fc-actions">
-        <button class="btn" id="fcStar">☆ 收藏</button>
+        <button class="btn" id="fcStar" aria-label="收藏">☆<span class="hide-sm"> 收藏</span></button>
         <button class="btn btn-primary" id="fcMaster">斩掉（标熟）</button>
       </div>
-      <button class="btn" id="fcNext">下一个 →</button>
+      <button class="btn" id="fcNext" aria-label="下一个"><span class="hide-sm">下一个 </span>→</button>
     </div>
   </div>
 </div>
@@ -1983,6 +2575,13 @@ function renderPhrases() {
   const pct = scoped.length ? Math.round((masteredCnt / scoped.length) * 100) : 0;
   const scopeTxt = state.scope === "10y" ? "英一 16–25 · 英二 15–24" : "英一 10–25 · 英二 10–24";
 
+  document.getElementById("mobileSummary").innerHTML = `
+    <div class="mobile-summary-top">
+      <div class="ms-left">已斩 <strong class="ms-num">${masteredCnt}</strong> / ${scoped.length} <span class="ms-pct">${pct}%</span></div>
+      <div class="ms-right">收藏 ${starredCnt} · ${state.scope === "10y" ? "近十年" : "全部"}</div>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+
   document.getElementById("statsStrip").innerHTML = `
     <div class="stat-card">
       <div class="stat-label"><span>收录动介词组</span><span>${scopeTxt}</span></div>
@@ -2075,7 +2674,8 @@ function renderPhrases() {
   document.getElementById("btnShowExAll").textContent = state.showExamples ? "收起例句 ▴" : "显示例句 ▾";
 
   const filtTotal = filtered.reduce((s, x) => s + x.count, 0);
-  document.getElementById("resultsCount").textContent = `共 ${filtered.length} 个词组 · 累计 ${filtTotal} 次真题出现`;
+  document.getElementById("resultsCount").innerHTML =
+    `共 ${filtered.length} 个词组<span class="hide-sm"> · 累计 ${filtTotal} 次真题出现</span>`;
 
   renderPhraseCards(filtered);
 }
@@ -2126,13 +2726,13 @@ function renderPhraseCards(list) {
 
     return `
       <article class="word-card ${isM ? "mastered" : ""}" data-tone="${tone}" data-key="${escapeHtml(it.p)}">
-        <div class="card-eyebrow">
+        <div class="card-header-grid">
           <div class="card-eyebrow-meta">
             <span>${splitParts}</span>
             ${clozeBadgeHtml}
           </div>
           <div class="card-right">
-            <span class="freq-badge ${freqClass}">×${it.count}</span>
+            <span class="freq-badge ${freqClass} desk-freq">×${it.count}</span>
             <button class="icon-btn ${isS ? "starred" : ""}" data-star="${escapeHtml(it.p)}" title="收藏">
               <svg class="icon" viewBox="0 0 24 24" fill="${isS ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </button>
@@ -2140,9 +2740,6 @@ function renderPhraseCards(list) {
               ? `<button class="slash-btn restore-btn" data-master="${escapeHtml(it.p)}" title="恢复到待背列表">恢复</button>`
               : `<button class="slash-btn" data-master="${escapeHtml(it.p)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
-        </div>
-
-        <div class="card-top">
           <div class="phrase-block">
             <div class="phrase-text">${formatPhraseHtml(it.p)}</div>
           </div>
@@ -2154,10 +2751,15 @@ function renderPhraseCards(list) {
 
         <div class="card-foot">
           <div class="card-foot-meta">
-            <span>${it.occs.length} 条真题出处</span>
+            <span class="desk-only-meta">${it.occs.length} 条真题出处</span>
+            <span class="mob-only-meta">
+              <span class="freq-badge ${freqClass}">×${it.count}</span>
+              ${clozeBadgeHtml}
+              <span class="mob-cat-text">${catLabel(it.c)}</span>
+            </span>
           </div>
           <button class="ex-toggle-btn" data-expand="${escapeHtml(it.p)}">
-            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
+            ${isExp ? "收起例句 ▴" : `<span class="hide-sm">真题</span>例句 (${it.occs.length}) ▾`}
           </button>
         </div>
       </article>`;
@@ -2330,6 +2932,13 @@ function renderPoly() {
   const pct = scoped.length ? Math.round((mCnt / scoped.length) * 100) : 0;
   const scopeTxt = state.scope === "10y" ? "英一 16–25 · 英二 15–24" : "英一 10–25 · 英二 10–24";
 
+  document.getElementById("mobileSummary").innerHTML = `
+    <div class="mobile-summary-top">
+      <div class="ms-left">已斩 <strong class="ms-num">${mCnt}</strong> / ${scoped.length} <span class="ms-pct">${pct}%</span></div>
+      <div class="ms-right">收藏 ${sCnt} · 真题句 ${occTotal}</div>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+
   document.getElementById("statsStrip").innerHTML = `
     <div class="stat-card">
       <div class="stat-label"><span>收录熟词生义</span><span>${scopeTxt}</span></div>
@@ -2391,7 +3000,7 @@ function renderPoly() {
 
     return `
       <article class="word-card ${isM ? "mastered" : ""}" data-tone="${polyTone}" data-key="${escapeHtml(it.w)}">
-        <div class="card-eyebrow">
+        <div class="card-header-grid">
           <div class="card-eyebrow-meta">
             <span>${examTag}</span>
           </div>
@@ -2403,8 +3012,6 @@ function renderPoly() {
               ? `<button class="slash-btn restore-btn" data-pmaster="${escapeHtml(it.w)}" title="恢复到待背列表">恢复</button>`
               : `<button class="slash-btn" data-pmaster="${escapeHtml(it.w)}" title="标熟并斩掉，不再出现">斩</button>`}
           </div>
-        </div>
-        <div class="card-top">
           <div class="phrase-block">
             <div class="phrase-text">${escapeHtml(it.w)} <span class="word-pos-pill">${escapeHtml(it.pos)}</span></div>
           </div>
@@ -2415,13 +3022,130 @@ function renderPoly() {
         </div>
         ${examplesHtml}
         <div class="card-foot">
-          <div class="card-foot-meta"><span>${it.occs.length ? `${it.occs.length} 条真题语境` : "考研核心生义"}</span></div>
+          <div class="card-foot-meta">
+            <span class="desk-only-meta">${it.occs.length ? `${it.occs.length} 条真题语境` : "考研核心生义"}</span>
+            <span class="mob-only-meta"><span class="mob-cat-text">${examTag}</span></span>
+          </div>
           <button class="ex-toggle-btn" data-pexpand="${escapeHtml(it.w)}">
-            ${isExp ? "收起例句 ▴" : `真题例句 (${it.occs.length}) ▾`}
+            ${isExp ? "收起例句 ▴" : `<span class="hide-sm">真题</span>例句 (${it.occs.length}) ▾`}
           </button>
         </div>
       </article>`;
   }).join("");
+}
+
+// ==================== Analytics (GA4 v2) ====================
+function trackEvent(name, params = {}, useBeacon = false) {
+  const gaState = window.__GA_STATE__ || { enabled: false, debug: false };
+  if (!gaState.enabled) {
+    console.debug("[GA4 disabled]", name, params);
+    return;
+  }
+  if (typeof window.gtag !== "function") return;
+  const payload = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined) payload[k] = v;
+  }
+  if (gaState.debug) payload.debug_mode = true;
+  if (useBeacon) payload.transport_type = "beacon";
+  if (gaState.debug) console.debug("[GA4 debug]", name, payload);
+  window.gtag("event", name, payload);
+}
+
+function setUserProperties(props) {
+  const gaState = window.__GA_STATE__;
+  if (!gaState || !gaState.enabled || typeof window.gtag !== "function") return;
+  window.gtag("set", "user_properties", props);
+}
+
+function tierBucket(count, isPoly = false) {
+  if (count <= 0) return "0";
+  if (count <= 10) return "1-10";
+  if (count <= 50) return "11-50";
+  if (isPoly) return "50+";
+  return count <= 150 ? "51-150" : "150+";
+}
+
+function getItemFreqTier(mode, key) {
+  if (mode === "poly") {
+    const it = BUNDLE.polysemy.find(x => x.w === key);
+    return it && it.hard ? "hard" : "normal";
+  }
+  const it = currentFilteredPhrases.find(x => x.p === key) || BUNDLE.phrases.find(x => x.p === key);
+  const count = it ? (it.count ?? it.o.length) : 0;
+  return count >= 8 ? "high" : (count >= 3 ? "mid" : "low");
+}
+
+const analyticsSession = {
+  sessionMasteredCount: 0,
+  milestonesFired: new Set(),
+  blurRevealedCount: 0,
+};
+
+function recordMasterMilestone() {
+  analyticsSession.sessionMasteredCount++;
+  const n = analyticsSession.sessionMasteredCount;
+  const milestone = n === 1 ? "first_master" : (n === 5 ? "session_5_mastered" : (n === 20 ? "session_20_mastered" : null));
+  if (milestone && !analyticsSession.milestonesFired.has(milestone)) {
+    analyticsSession.milestonesFired.add(milestone);
+    trackEvent("study_milestone", { milestone });
+  }
+}
+
+let searchTrackTimer = null;
+function trackSearchDebounced(mode, query) {
+  clearTimeout(searchTrackTimer);
+  const q = query.trim();
+  if (!q) return;
+  searchTrackTimer = setTimeout(() => {
+    const resultCount = mode === "poly" ? currentFilteredPoly.length : currentFilteredPhrases.length;
+    trackEvent("search", {
+      search_term: q.slice(0, 60),
+      mode,
+      result_count: resultCount,
+      is_zero_result: resultCount === 0,
+    });
+  }, 800);
+}
+
+function trackFilter(mode, filterType, filterValue) {
+  const resultCount = mode === "poly" ? currentFilteredPoly.length : currentFilteredPhrases.length;
+  trackEvent("apply_filter", {
+    mode,
+    filter_type: filterType,
+    filter_value: String(filterValue),
+    result_count: resultCount,
+  });
+}
+
+function flushBlurSession(useBeacon = false) {
+  if (state.blur && analyticsSession.blurRevealedCount > 0) {
+    trackEvent("toggle_blur_mode", {
+      enabled: false,
+      revealed_count: analyticsSession.blurRevealedCount,
+    }, useBeacon);
+    analyticsSession.blurRevealedCount = 0;
+  }
+}
+
+function initAnalyticsSession() {
+  const returning = state.mastered.size > 0 || state.starred.size > 0 || state.polyMastered.size > 0 || state.polyStarred.size > 0;
+  const viewportType = window.innerWidth <= 768 ? "mobile" : "desktop";
+  const preferredTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  setUserProperties({
+    returning_learner: String(returning),
+    mastered_phrases_tier: tierBucket(state.mastered.size, false),
+    mastered_poly_tier: tierBucket(state.polyMastered.size, true),
+    viewport_type: viewportType,
+    preferred_theme: preferredTheme,
+  });
+  trackEvent("learner_session_init", {
+    entry_module: state.mod,
+    has_progress: returning,
+    phrases_mastered_cnt: state.mastered.size,
+    poly_mastered_cnt: state.polyMastered.size,
+    viewport_type: viewportType,
+  });
 }
 
 // ==================== Event Bindings ====================
@@ -2431,6 +3155,7 @@ document.getElementById("moduleNav").addEventListener("click", e => {
   document.querySelectorAll("#moduleNav .mod-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   state.mod = btn.dataset.mod;
+  trackEvent("switch_module", { module: state.mod });
   render();
 });
 
@@ -2440,6 +3165,7 @@ document.querySelectorAll(".scope-btn").forEach(btn => {
     btn.classList.add("active");
     state.scope = btn.dataset.scope;
     state.shown = state.pageSize;
+    trackEvent("switch_scope", { scope: state.scope });
     render();
   });
 });
@@ -2452,22 +3178,27 @@ document.getElementById("catTabs").addEventListener("click", e => {
   btn.classList.add("active");
   state.cat = btn.dataset.cat; state.prep = "all"; state.verb = "all"; state.shown = state.pageSize;
   renderPhrases();
+  trackFilter("phrases", "cat", state.cat);
 });
 
 document.getElementById("btnHardOnly").addEventListener("click", () => {
   state.hardOnly = !state.hardOnly; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "hard_only", state.hardOnly);
 });
 
 document.getElementById("btnPolyHardOnly").addEventListener("click", () => {
   state.polyHardOnly = !state.polyHardOnly; renderPoly();
+  trackFilter("poly", "hard_only", state.polyHardOnly);
 });
 
 document.getElementById("btnClozeOnly").addEventListener("click", () => {
   state.clozeOnly = !state.clozeOnly; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "cloze_only", state.clozeOnly);
 });
 
 document.getElementById("btnPolyOnly").addEventListener("click", () => {
   state.polyOnly = !state.polyOnly; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "poly_only", state.polyOnly);
 });
 
 document.getElementById("examTabs").addEventListener("click", e => {
@@ -2476,6 +3207,7 @@ document.getElementById("examTabs").addEventListener("click", e => {
   document.querySelectorAll("#examTabs .seg-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   state.exam = btn.dataset.exam; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "exam", state.exam);
 });
 
 document.getElementById("statusTabs").addEventListener("click", e => {
@@ -2484,10 +3216,17 @@ document.getElementById("statusTabs").addEventListener("click", e => {
   document.querySelectorAll("#statusTabs .seg-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   state.status = btn.dataset.status; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "status", state.status);
 });
 
-document.getElementById("freqSelect").addEventListener("change", e => { state.freqMin = e.target.value; state.shown = state.pageSize; renderPhrases(); });
-document.getElementById("sortSelect").addEventListener("change", e => { state.sort = e.target.value; state.shown = state.pageSize; renderPhrases(); });
+document.getElementById("freqSelect").addEventListener("change", e => {
+  state.freqMin = e.target.value; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "freq", state.freqMin);
+});
+document.getElementById("sortSelect").addEventListener("change", e => {
+  state.sort = e.target.value; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "sort", state.sort);
+});
 
 const searchInput = document.getElementById("searchInput");
 const searchClear = document.getElementById("searchClear");
@@ -2496,19 +3235,22 @@ searchInput.addEventListener("input", () => {
   searchClear.classList.toggle("visible", state.search.length > 0);
   state.shown = state.pageSize;
   renderPhrases();
+  trackSearchDebounced("phrases", state.search);
 });
-searchClear.addEventListener("click", () => { searchInput.value = ""; state.search = ""; searchClear.classList.remove("visible"); renderPhrases(); });
+searchClear.addEventListener("click", () => { searchInput.value = ""; state.search = ""; searchClear.classList.remove("visible"); clearTimeout(searchTrackTimer); renderPhrases(); });
 
 document.getElementById("prepStrip").addEventListener("click", e => {
   const btn = e.target.closest(".prep-chip");
   if (!btn) return;
   state.prep = btn.dataset.prep; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "prep", state.prep);
 });
 
 document.getElementById("verbFamilyChips").addEventListener("click", e => {
   const btn = e.target.closest(".family-chip");
   if (!btn) return;
   state.verb = btn.dataset.verb; state.shown = state.pageSize; renderPhrases();
+  trackFilter("phrases", "verb", state.verb);
 });
 
 document.getElementById("chartBars").addEventListener("click", e => {
@@ -2517,6 +3259,7 @@ document.getElementById("chartBars").addEventListener("click", e => {
   searchInput.value = row.dataset.jump; state.search = row.dataset.jump;
   searchClear.classList.add("visible"); state.verb = "all"; state.prep = "all";
   renderPhrases();
+  trackEvent("interact_top_panel", { action: "jump_phrase", item: row.dataset.jump });
   document.getElementById("wordGrid").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
@@ -2530,6 +3273,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
   document.querySelector('#examTabs .seg-btn[data-exam="all"]').classList.add("active");
   document.querySelector('#statusTabs .seg-btn[data-status="unmastered"]').classList.add("active");
   renderPhrases();
+  trackFilter("phrases", "reset", "all");
 });
 
 document.getElementById("btnFilterDrawer").addEventListener("click", () => {
@@ -2539,6 +3283,7 @@ document.getElementById("btnFilterDrawer").addEventListener("click", () => {
 document.getElementById("btnShowExAll").addEventListener("click", () => {
   state.showExamples = !state.showExamples;
   renderPhrases();
+  trackEvent("expand_examples", { mode: "phrases", scope: "all", opened: state.showExamples });
 });
 
 document.getElementById("btnPolyFilterDrawer").addEventListener("click", () => {
@@ -2548,26 +3293,35 @@ document.getElementById("btnPolyFilterDrawer").addEventListener("click", () => {
 document.getElementById("btnPolyShowExAll").addEventListener("click", () => {
   state.polyShowExamples = !state.polyShowExamples;
   renderPoly();
+  trackEvent("expand_examples", { mode: "poly", scope: "all", opened: state.polyShowExamples });
 });
 
 document.getElementById("analyticsToggle").addEventListener("click", () => {
   const open = document.getElementById("analyticsPanel").classList.toggle("open");
   document.getElementById("analyticsChevron").textContent = open ? "收起 ▴" : "展开 ▾";
+  trackEvent("interact_top_panel", { action: open ? "toggle_open" : "toggle_close" });
 });
 
 document.getElementById("btnLoadMore").addEventListener("click", () => {
-  state.shown += state.pageSize; renderPhraseCards(currentFilteredPhrases);
+  state.shown += state.pageSize;
+  renderPhraseCards(currentFilteredPhrases);
+  trackEvent("load_more_items", {
+    shown_count: Math.min(state.shown, currentFilteredPhrases.length),
+    total_count: currentFilteredPhrases.length,
+  });
 });
 
 // ==================== FLIP + Ink-Slash Engine & Undo Toast ====================
 const prefersReducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let toastTimer = null;
 let lastUndoAction = null;
+let lastUndoMeta = null;
 
-function showToast(text, onUndo) {
+function showToast(text, onUndo, meta = null) {
   const host = document.getElementById("toastHost");
   document.getElementById("toastText").textContent = text;
   lastUndoAction = onUndo;
+  lastUndoMeta = meta;
   host.classList.add("visible");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
@@ -2578,9 +3332,12 @@ function showToast(text, onUndo) {
 document.getElementById("toastUndo").addEventListener("click", () => {
   if (lastUndoAction) {
     const fn = lastUndoAction;
+    const meta = lastUndoMeta;
     lastUndoAction = null;
+    lastUndoMeta = null;
     clearTimeout(toastTimer);
     document.getElementById("toastHost").classList.remove("visible");
+    trackEvent("undo_action", meta || {});
     fn();
   }
 });
@@ -2639,7 +3396,7 @@ function flipGridTransition(gridEl, mutateAndRender, enterKey = null) {
   }
 }
 
-function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStatus) {
+function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStatus, mode = "phrases") {
   const isAlreadySlashed = targetSet.has(key);
   if (isAlreadySlashed) {
     // Restore smoothly with FLIP
@@ -2654,7 +3411,7 @@ function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStat
         saveProgress();
         renderFn();
       }, key);
-    });
+    }, { mode, source: "card", action: "restore" });
     return;
   }
 
@@ -2668,7 +3425,7 @@ function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStat
       targetSet.delete(key);
       saveProgress();
       renderFn();
-    });
+    }, { mode, source: "card", action: "master" });
     return;
   }
 
@@ -2699,21 +3456,35 @@ function handleSlashToggle(gridEl, cardEl, key, targetSet, renderFn, currentStat
         saveProgress();
         renderFn();
       }, key);
-    });
+    }, { mode, source: "card", action: "master" });
   }, 360);
 }
 
 document.getElementById("wordGrid").addEventListener("click", e => {
-  const st = e.target.closest("[data-star]"); if (st) { const p = st.dataset.star; state.starred.has(p) ? state.starred.delete(p) : state.starred.add(p); saveProgress(); renderPhrases(); return; }
+  const st = e.target.closest("[data-star]"); if (st) { const p = st.dataset.star; const starred = !state.starred.has(p); starred ? state.starred.add(p) : state.starred.delete(p); trackEvent("star_item", { mode: "phrases", item: p, starred, source: "card" }); saveProgress(); renderPhrases(); return; }
   const ms = e.target.closest("[data-master]");
   if (ms) {
     const p = ms.dataset.master;
     const cardEl = ms.closest(".word-card");
-    handleSlashToggle(document.getElementById("wordGrid"), cardEl, p, state.mastered, renderPhrases, state.status);
+    if (cardEl && (cardEl.classList.contains("is-slashing") || cardEl.classList.contains("is-vanishing"))) return;
+    const isRestoring = state.mastered.has(p);
+    trackEvent(isRestoring ? "restore_item" : "master_item", { mode: "phrases", item: p, source: "card", item_freq_tier: getItemFreqTier("phrases", p) });
+    if (!isRestoring) recordMasterMilestone();
+    handleSlashToggle(document.getElementById("wordGrid"), cardEl, p, state.mastered, renderPhrases, state.status, "phrases");
     return;
   }
-  const ex = e.target.closest("[data-expand]"); if (ex) { const p = ex.dataset.expand; flipGridTransition(document.getElementById("wordGrid"), () => { state.expanded.has(p) ? state.expanded.delete(p) : state.expanded.add(p); renderPhraseCards(currentFilteredPhrases); }); return; }
-  const rev = e.target.closest(".zh-meaning, .poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
+  const ex = e.target.closest("[data-expand]"); if (ex) {
+    const p = ex.dataset.expand;
+    const opened = !state.expanded.has(p);
+    trackEvent("expand_examples", { mode: "phrases", scope: "single", opened });
+    flipGridTransition(document.getElementById("wordGrid"), () => { state.expanded.has(p) ? state.expanded.delete(p) : state.expanded.add(p); renderPhraseCards(currentFilteredPhrases); });
+    return;
+  }
+  const rev = e.target.closest(".zh-meaning, .poly-row-exm");
+  if (rev && state.blur) {
+    const revealed = rev.classList.toggle("revealed");
+    if (revealed) analyticsSession.blurRevealedCount++;
+  }
 });
 
 // Poly controls
@@ -2722,15 +3493,20 @@ document.getElementById("polyExamTabs").addEventListener("click", e => {
   const btn = e.target.closest(".seg-btn"); if (!btn) return;
   document.querySelectorAll("#polyExamTabs .seg-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active"); state.polyExam = btn.dataset.exam; renderPoly();
+  trackFilter("poly", "exam", state.polyExam);
 });
 
 document.getElementById("polyStatusTabs").addEventListener("click", e => {
   const btn = e.target.closest(".seg-btn"); if (!btn) return;
   document.querySelectorAll("#polyStatusTabs .seg-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active"); state.polyStatus = btn.dataset.status; renderPoly();
+  trackFilter("poly", "status", state.polyStatus);
 });
 
-document.getElementById("polySortSelect").addEventListener("change", e => { state.polySort = e.target.value; renderPoly(); });
+document.getElementById("polySortSelect").addEventListener("change", e => {
+  state.polySort = e.target.value; renderPoly();
+  trackFilter("poly", "sort", state.polySort);
+});
 
 const polySearch = document.getElementById("polySearchInput");
 const polyClear = document.getElementById("polySearchClear");
@@ -2738,20 +3514,35 @@ polySearch.addEventListener("input", () => {
   state.polySearch = polySearch.value;
   polyClear.classList.toggle("visible", state.polySearch.length > 0);
   renderPoly();
+  trackSearchDebounced("poly", state.polySearch);
 });
-polyClear.addEventListener("click", () => { polySearch.value = ""; state.polySearch = ""; polyClear.classList.remove("visible"); renderPoly(); });
+polyClear.addEventListener("click", () => { polySearch.value = ""; state.polySearch = ""; polyClear.classList.remove("visible"); clearTimeout(searchTrackTimer); renderPoly(); });
 
 document.getElementById("polyGrid").addEventListener("click", e => {
-  const st = e.target.closest("[data-pstar]"); if (st) { const w = st.dataset.pstar; state.polyStarred.has(w) ? state.polyStarred.delete(w) : state.polyStarred.add(w); saveProgress(); renderPoly(); return; }
+  const st = e.target.closest("[data-pstar]"); if (st) { const w = st.dataset.pstar; const starred = !state.polyStarred.has(w); starred ? state.polyStarred.add(w) : state.polyStarred.delete(w); trackEvent("star_item", { mode: "poly", item: w, starred, source: "card" }); saveProgress(); renderPoly(); return; }
   const ms = e.target.closest("[data-pmaster]");
   if (ms) {
     const w = ms.dataset.pmaster;
     const cardEl = ms.closest(".word-card");
-    handleSlashToggle(document.getElementById("polyGrid"), cardEl, w, state.polyMastered, renderPoly, state.polyStatus);
+    if (cardEl && (cardEl.classList.contains("is-slashing") || cardEl.classList.contains("is-vanishing"))) return;
+    const isRestoring = state.polyMastered.has(w);
+    trackEvent(isRestoring ? "restore_item" : "master_item", { mode: "poly", item: w, source: "card", item_freq_tier: getItemFreqTier("poly", w) });
+    if (!isRestoring) recordMasterMilestone();
+    handleSlashToggle(document.getElementById("polyGrid"), cardEl, w, state.polyMastered, renderPoly, state.polyStatus, "poly");
     return;
   }
-  const ex = e.target.closest("[data-pexpand]"); if (ex) { const w = ex.dataset.pexpand; flipGridTransition(document.getElementById("polyGrid"), () => { state.polyExpanded.has(w) ? state.polyExpanded.delete(w) : state.polyExpanded.add(w); renderPoly(); }); return; }
-  const rev = e.target.closest(".poly-row-exm"); if (rev && state.blur) rev.classList.toggle("revealed");
+  const ex = e.target.closest("[data-pexpand]"); if (ex) {
+    const w = ex.dataset.pexpand;
+    const opened = !state.polyExpanded.has(w);
+    trackEvent("expand_examples", { mode: "poly", scope: "single", opened });
+    flipGridTransition(document.getElementById("polyGrid"), () => { state.polyExpanded.has(w) ? state.polyExpanded.delete(w) : state.polyExpanded.add(w); renderPoly(); });
+    return;
+  }
+  const rev = e.target.closest(".poly-row-exm");
+  if (rev && state.blur) {
+    const revealed = rev.classList.toggle("revealed");
+    if (revealed) analyticsSession.blurRevealedCount++;
+  }
 });
 
 // Shared header actions
@@ -2759,17 +3550,77 @@ document.getElementById("btnBlur").addEventListener("click", e => {
   state.blur = !state.blur;
   document.body.classList.toggle("blur-mode", state.blur);
   e.currentTarget.classList.toggle("active", state.blur);
+  if (state.blur) {
+    analyticsSession.blurRevealedCount = 0;
+    trackEvent("toggle_blur_mode", { enabled: true });
+  } else {
+    trackEvent("toggle_blur_mode", { enabled: false, revealed_count: analyticsSession.blurRevealedCount });
+    analyticsSession.blurRevealedCount = 0;
+  }
 });
 
 document.getElementById("btnTheme").addEventListener("click", () => {
   const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-  document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+  const nextTheme = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", nextTheme);
+  setUserProperties({ preferred_theme: nextTheme });
+  trackEvent("toggle_theme", { theme: nextTheme });
   saveProgress();
 });
 
 // ==================== Flashcards (works for BOTH phrases & 熟词生义!) ====================
 const fc = { mode: "phrases", deck: [], idx: 0, flipped: false };
 const fcModal = document.getElementById("fcModal");
+const fcStats = {
+  active: false,
+  mode: "phrases",
+  deckSize: 0,
+  startTime: 0,
+  viewedSet: new Set(),
+  flipsCount: 0,
+  masteredCount: 0,
+  starredCount: 0,
+  inputs: { touch: 0, click: 0, keyboard: 0 },
+};
+
+function getFcItemKey(it) {
+  if (!it) return "";
+  return fc.mode === "poly" ? it.w : it.p;
+}
+
+function recordFcView(inputMethod) {
+  if (!fcStats.active) return;
+  const k = getFcItemKey(fc.deck[fc.idx]);
+  if (k) fcStats.viewedSet.add(k);
+  if (inputMethod && fcStats.inputs[inputMethod] !== undefined) {
+    fcStats.inputs[inputMethod]++;
+  }
+}
+
+function flushFlashcardSession(completed = false, useBeacon = false) {
+  if (!fcStats.active) return;
+  fcStats.active = false;
+  const durationSec = Math.max(1, Math.round((Date.now() - fcStats.startTime) / 1000));
+  let inputMethod = "click";
+  let best = 0;
+  for (const k of ["touch", "keyboard", "click"]) {
+    if (fcStats.inputs[k] > best) {
+      best = fcStats.inputs[k];
+      inputMethod = k;
+    }
+  }
+  trackEvent("flashcard_session_end", {
+    mode: fcStats.mode,
+    deck_size: fcStats.deckSize,
+    cards_viewed: fcStats.viewedSet.size,
+    flips_count: fcStats.flipsCount,
+    mastered_count: fcStats.masteredCount,
+    starred_count: fcStats.starredCount,
+    duration_sec: durationSec,
+    completed: Boolean(completed),
+    input_method: inputMethod,
+  }, useBeacon);
+}
 
 function openFlashcards() {
   fc.mode = state.mod === "poly" ? "poly" : "phrases";
@@ -2782,12 +3633,29 @@ function openFlashcards() {
   }
   if (!fc.deck.length) return;
   fc.idx = 0; fc.flipped = false;
+  document.body.classList.add("modal-open");
   fcModal.classList.add("open");
   fcModal.setAttribute("aria-hidden", "false");
+  fcStats.active = true;
+  fcStats.mode = fc.mode;
+  fcStats.deckSize = fc.deck.length;
+  fcStats.startTime = Date.now();
+  fcStats.viewedSet = new Set([getFcItemKey(fc.deck[0])]);
+  fcStats.flipsCount = 0;
+  fcStats.masteredCount = 0;
+  fcStats.starredCount = 0;
+  fcStats.inputs = { touch: 0, click: 0, keyboard: 0 };
+  trackEvent("flashcard_start", {
+    mode: fc.mode,
+    deck_size: fc.deck.length,
+    status_filter: fc.mode === "poly" ? state.polyStatus : state.status,
+  });
   renderFlashcard();
 }
 
 function closeFlashcards() {
+  flushFlashcardSession(false, false);
+  document.body.classList.remove("modal-open");
   fcModal.classList.remove("open");
   fcModal.setAttribute("aria-hidden", "true");
   render();
@@ -2800,6 +3668,7 @@ function renderFlashcard() {
   const pill = document.getElementById("fcCatPill");
   const famHint = document.getElementById("fcFamHint");
   const polyNote = document.getElementById("fcPolyNote");
+  const fcStarEl = document.getElementById("fcStar");
 
   if (fc.mode === "poly") {
     pill.className = "pill pill-three";
@@ -2814,7 +3683,9 @@ function renderFlashcard() {
     document.getElementById("fcZh").textContent = `考研生义：${it.exm}`;
     polyNote.textContent = "";
     document.getElementById("fcMeta").textContent = "";
-    document.getElementById("fcStar").textContent = state.polyStarred.has(it.w) ? "★ 已收藏" : "☆ 收藏";
+    const isStarred = state.polyStarred.has(it.w);
+    fcStarEl.innerHTML = isStarred ? '★<span class="hide-sm"> 已收藏</span>' : '☆<span class="hide-sm"> 收藏</span>';
+    fcStarEl.classList.toggle("starred", isStarred);
     document.getElementById("fcMaster").textContent = state.polyMastered.has(it.w) ? "恢复待背" : "斩掉（标熟）";
   } else {
     pill.className = `pill pill-${it.c}`;
@@ -2829,7 +3700,9 @@ function renderFlashcard() {
     document.getElementById("fcZh").textContent = it.z;
     polyNote.textContent = it.poly ? `熟词生义提示：熟义「${it.poly[0]}」→ 考研生义「${it.poly[1]}」` : "";
     document.getElementById("fcMeta").textContent = `真题频次：共 ${it.count} 次（英一 ${it.c1} · 英二 ${it.c2}）`;
-    document.getElementById("fcStar").textContent = state.starred.has(it.p) ? "★ 已收藏" : "☆ 收藏";
+    const isStarred = state.starred.has(it.p);
+    fcStarEl.innerHTML = isStarred ? '★<span class="hide-sm"> 已收藏</span>' : '☆<span class="hide-sm"> 收藏</span>';
+    fcStarEl.classList.toggle("starred", isStarred);
     document.getElementById("fcMaster").textContent = state.mastered.has(it.p) ? "恢复待背" : "斩掉（标熟）";
   }
 
@@ -2840,64 +3713,123 @@ function renderFlashcard() {
 document.getElementById("btnFlashcard").addEventListener("click", openFlashcards);
 document.getElementById("fcClose").addEventListener("click", closeFlashcards);
 fcModal.addEventListener("click", e => { if (e.target === fcModal) closeFlashcards(); });
-document.getElementById("fcBody").addEventListener("click", () => {
-  fc.flipped = !fc.flipped; renderFlashcard();
+let fcTouchStartX = 0, fcTouchStartY = 0, fcJustSwiped = false;
+const fcBodyEl = document.getElementById("fcBody");
+fcBodyEl.addEventListener("touchstart", e => {
+  if (e.touches.length !== 1) return;
+  fcTouchStartX = e.touches[0].clientX;
+  fcTouchStartY = e.touches[0].clientY;
+  fcJustSwiped = false;
+}, { passive: true });
+fcBodyEl.addEventListener("touchend", e => {
+  if (!e.changedTouches.length) return;
+  const dx = e.changedTouches[0].clientX - fcTouchStartX;
+  const dy = e.changedTouches[0].clientY - fcTouchStartY;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    fcJustSwiped = true;
+    fc.idx = dx < 0 ? (fc.idx + 1) % fc.deck.length : (fc.idx - 1 + fc.deck.length) % fc.deck.length;
+    fc.flipped = false;
+    recordFcView("touch");
+    renderFlashcard();
+    setTimeout(() => { fcJustSwiped = false; }, 250);
+  }
+}, { passive: true });
+fcBodyEl.addEventListener("click", () => {
+  if (fcJustSwiped) return;
+  fc.flipped = !fc.flipped;
+  if (fc.flipped) fcStats.flipsCount++;
+  fcStats.inputs.click++;
+  renderFlashcard();
 });
-document.getElementById("fcPrev").addEventListener("click", () => { fc.idx = (fc.idx - 1 + fc.deck.length) % fc.deck.length; fc.flipped = false; renderFlashcard(); });
-document.getElementById("fcNext").addEventListener("click", () => { fc.idx = (fc.idx + 1) % fc.deck.length; fc.flipped = false; renderFlashcard(); });
+document.getElementById("fcPrev").addEventListener("click", () => { fc.idx = (fc.idx - 1 + fc.deck.length) % fc.deck.length; fc.flipped = false; recordFcView("click"); renderFlashcard(); });
+document.getElementById("fcNext").addEventListener("click", () => { fc.idx = (fc.idx + 1) % fc.deck.length; fc.flipped = false; recordFcView("click"); renderFlashcard(); });
 document.getElementById("fcStar").addEventListener("click", () => {
   const it = fc.deck[fc.idx]; if (!it) return;
-  if (fc.mode === "poly") { state.polyStarred.has(it.w) ? state.polyStarred.delete(it.w) : state.polyStarred.add(it.w); }
-  else { state.starred.has(it.p) ? state.starred.delete(it.p) : state.starred.add(it.p); }
+  const key = fc.mode === "poly" ? it.w : it.p;
+  const set = fc.mode === "poly" ? state.polyStarred : state.starred;
+  const starred = !set.has(key);
+  starred ? set.add(key) : set.delete(key);
+  if (starred) fcStats.starredCount++;
+  trackEvent("star_item", { mode: fc.mode, item: key, starred, source: "flashcard" });
   saveProgress(); renderFlashcard();
 });
 document.getElementById("fcMaster").addEventListener("click", () => {
   const it = fc.deck[fc.idx]; if (!it) return;
+  const bodyEl = document.getElementById("fcBody");
+  if (bodyEl.classList.contains("fc-exit")) return;
   const set = fc.mode === "poly" ? state.polyMastered : state.mastered;
   const key = fc.mode === "poly" ? it.w : it.p;
   if (set.has(key)) {
     set.delete(key);
+    trackEvent("restore_item", { mode: fc.mode, item: key, source: "flashcard", item_freq_tier: getItemFreqTier(fc.mode, key) });
     saveProgress();
     renderFlashcard();
     return;
   }
-  const bodyEl = document.getElementById("fcBody");
   bodyEl.classList.add("fc-exit");
   setTimeout(() => {
     set.add(key);
+    fcStats.masteredCount++;
+    trackEvent("master_item", { mode: fc.mode, item: key, source: "flashcard", item_freq_tier: getItemFreqTier(fc.mode, key) });
+    recordMasterMilestone();
     saveProgress();
     fc.deck.splice(fc.idx, 1);
     bodyEl.classList.remove("fc-exit");
     if (fc.deck.length === 0) {
+      trackEvent("flashcard_complete", { mode: fc.mode, deck_size: fcStats.deckSize });
+      flushFlashcardSession(true, false);
       closeFlashcards();
       showToast(`已斩「${key}」，本组全部完成`, () => {
         set.delete(key); saveProgress(); render();
-      });
+      }, { mode: fc.mode, source: "flashcard", action: "master" });
       return;
     }
     if (fc.idx >= fc.deck.length) fc.idx = 0;
     fc.flipped = false;
+    recordFcView();
     renderFlashcard();
     bodyEl.classList.add("fc-enter");
     bodyEl.addEventListener("animationend", () => bodyEl.classList.remove("fc-enter"), { once: true });
     showToast(`已斩「${key}」`, () => {
       set.delete(key); saveProgress(); render();
-    });
+    }, { mode: fc.mode, source: "flashcard", action: "master" });
   }, 160);
 });
 document.addEventListener("keydown", e => {
   if (!fcModal.classList.contains("open")) return;
   if (e.key === "Escape") closeFlashcards();
-  else if (e.key === " ") { e.preventDefault(); fc.flipped = !fc.flipped; renderFlashcard(); }
-  else if (e.key === "ArrowRight") { fc.idx = (fc.idx + 1) % fc.deck.length; fc.flipped = false; renderFlashcard(); }
-  else if (e.key === "ArrowLeft") { fc.idx = (fc.idx - 1 + fc.deck.length) % fc.deck.length; fc.flipped = false; renderFlashcard(); }
+  else if (e.key === " ") {
+    e.preventDefault();
+    fc.flipped = !fc.flipped;
+    if (fc.flipped) fcStats.flipsCount++;
+    fcStats.inputs.keyboard++;
+    renderFlashcard();
+  }
+  else if (e.key === "ArrowRight") { fc.idx = (fc.idx + 1) % fc.deck.length; fc.flipped = false; recordFcView("keyboard"); renderFlashcard(); }
+  else if (e.key === "ArrowLeft") { fc.idx = (fc.idx - 1 + fc.deck.length) % fc.deck.length; fc.flipped = false; recordFcView("keyboard"); renderFlashcard(); }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    flushFlashcardSession(false, true);
+    flushBlurSession(true);
+  }
+});
+window.addEventListener("pagehide", () => {
+  flushFlashcardSession(false, true);
+  flushBlurSession(true);
 });
 
 if (location.hash === "#poly") {
   state.mod = "poly";
   document.querySelectorAll("#moduleNav .mod-btn").forEach(b => b.classList.toggle("active", b.dataset.mod === state.mod));
 }
+if (window.innerWidth <= 768) {
+  document.getElementById("analyticsPanel").classList.remove("open");
+  document.getElementById("analyticsChevron").textContent = "展开 ▾";
+}
 render();
+initAnalyticsSession();
 </script>
 </body>
 </html>
